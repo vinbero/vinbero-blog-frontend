@@ -25,10 +25,15 @@
                 var template = `
                     <div class="row">
                         <div class="col-sm-4"></div>
-                        <div class="col-sm-4 panel panel-default">
-                            <div class="panel-heading">{{id}} | {{title}}</div>
-                            <div class="panel-body">
-                                {{#private}} private {{/private}} {{^private}} public {{/private}} | {{cdate}} | {{mdate}} | {{text}}
+                        <div class="col-sm-4">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">{{id}} | {{title}}</div>
+                                <div class="panel-body">
+                                    {{text}}
+                                </div>
+                                <div class="panel-footer">
+                                    {{#private}} private {{/private}} {{^private}} public {{/private}} | {{cdate}} | {{mdate}}
+                                </div>
                             </div>
                         </div>
                     </div>`;
