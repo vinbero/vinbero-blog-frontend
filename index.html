@@ -112,40 +112,18 @@
                     },
                     render: function() {
                         return (
-                            <div>
+                        <div>
                             {
                                this.state.posts.map(function(post) {
                                    return (<PostPreview id={post.id} title={post.title} cdate={post.cdate} mdate={post.mdate} private={post.private}/>);
                                })
                             }
-                            </div>
+                        </div>
                        ); 
                     }
                 });
-
-                var Container = React.createClass({
-                    getInitialState: function() {
-                        return {
-                            action: "readPosts"
-                        };
-                    },
-                    render: function() {
-                        if(this.state.action == "readPosts")
-                        {
-                            return (
-                                <div>
-                                    <div className="row">
-                                        <div className="col-sm-4"></div>
-                                        <h1 className="col-sm-4"><a href="index.html">CuBlog</a></h1>
-                                    </div>
-                                    <Posts/>
-                                </div>
-                            );
-                        }
-                    }
-                });
-
-                ReactDOM.render(<Container/>, document.getElementById("container"));
+                
+                ReactDOM.render(<Posts/>, document.getElementById("container"));
             </script>
          </div>
     </body>
