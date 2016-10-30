@@ -60,70 +60,7 @@
                         }
                     }
                 });
-
-                var PostPreview = React.createClass({
-                    render: function() {
-                        if(this.props.private)
-                        {
-                            return (
-                                <div className="row">
-                                    <div className="col-sm-4"></div>
-                                    <div className="col-sm-4">
-                                        <div className="panel panel-primary">
-                                            <div className="panel-heading">{this.props.id} | {this.props.title}</div>
-                                            <div className="panel-footer">
-                                                public | {this.props.cdate} | {this.props.mdate}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        }
-                        else
-                        {
-                            return (
-                                <div className="row">
-                                    <div className="col-sm-4"></div>
-                                    <div className="col-sm-4">
-                                        <div className="panel panel-primary">
-                                            <div className="panel-heading">{this.props.id} | {this.props.title}</div>
-                                            <div className="panel-footer">
-                                               private | {this.props.cdate} | {this.props.mdate}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        }
-                    }
-                });
-
-                var Posts = React.createClass({
-                    getInitialState: function() {
-                        return {
-                            posts: [] 
-                        };
-                    },
-                    componentDidMount: function() {
-                        var that = this;
-                        $.getJSON("http://localhost:8080/posts", function(data) {
-                            that.setState({posts: data});
-                        });
-                    },
-                    render: function() {
-                        return (
-                        <div>
-                            {
-                               this.state.posts.map(function(post) {
-                                   return (<PostPreview id={post.id} title={post.title} cdate={post.cdate} mdate={post.mdate} private={post.private}/>);
-                               })
-                            }
-                        </div>
-                       ); 
-                    }
-                });
-                
-                ReactDOM.render(<Posts/>, document.getElementById("container"));
+                ReactDOM.render(<Post id="10" title="Title" text="Text" cdate="2016-01-01" mdate="2016-01-01" private="false"/>, document.getElementById("container"));
             </script>
          </div>
     </body>
