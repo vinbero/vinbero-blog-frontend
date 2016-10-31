@@ -16,11 +16,31 @@
     </head>
     <body>
         <div class="row">
+            <div class="col-sm-3"></div>
+            <h1 class="col-sm-6" style="text-align:center"><a href="index.html">CuBlog</a></h1>
+        </div>
+        <div class="row">
             <div class="col-sm-4"></div>
-            <h1 class="col-sm-4"><a href="index.html">CuBlog</a></h1>
+            <form class="col-sm-4" action="http://localhost:8080/tokens" method="post" id="login-form">
+                <div class="form-group">
+                    <label for="id">Id:</label>
+                    <input type="id" class="form-control" id="login-form-id" placeholder="Enter id">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" class="form-control" id="login-form-password" placeholder="Enter password">
+                </div>
+                <button type="submit" class="btn btn-default" id="login-form-submit">Submit</button>
+            </form>
         </div>
         <script>
             $.postJSON = function(url, data, func) { return $.post(url, data, func, 'json'); }
+            $("#login-form").submit(function(e) {
+                e.preventDefault();
+                $.postJSON("http://localhost:8080/tokens", JSON.stringify({id: $("#login-form-id").val(), password: $("#login-form-password").val()}), function() { alert("successful!"); });
+
+            });
+            /* 
             var params = new URLSearchParams(window.location.search);
             $.postJSON("http://localhost:8080/tokens", JSON.stringify({id: params.get("id"), password: params.get("password")}), function(data) {
                 sessionStorage.setItem("Access-Token", data);
@@ -29,6 +49,7 @@
             .fail(function() {
                 alert("login failure");
             });
+            */
         </script>
     </body>
 </html>
