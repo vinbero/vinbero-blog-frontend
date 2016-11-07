@@ -16,6 +16,7 @@
     </head>
     <body class="container">
         <script>
+alert(document.cookie);
             $.getJSON("http://localhost:8080/posts", function(data) {
                 var template = `
                     <div class="row">

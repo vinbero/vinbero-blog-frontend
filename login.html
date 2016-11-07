@@ -34,10 +34,17 @@
             </form>
         </div>
         <script>
+
+$.ajaxSetup({
+  xhrFields: {
+    withCredentials: true
+  }
+});
+
             $.postJSON = function(url, data, func) { return $.post(url, data, func, 'json'); }
             $("#login-form").submit(function(e) {
                 e.preventDefault();
-                $.postJSON("http://localhost:8080/tokens", JSON.stringify({id: $("#login-form-id").val(), password: $("#login-form-password").val()}), function() { alert("successful!"); });
+                $.postJSON("http://localhost:8080/tokens", JSON.stringify({id: $("#login-form-id").val(), password: $("#login-form-password").val()}), function() { alert("success!, cookie is " + document.cookie); });
 
             });
             /* 

@@ -20,7 +20,7 @@
             <h1 class="col-sm-4"><a href="index.html">CuBlog</a></h1>
         </div>
         <script>
-            alert(sessionStorage.getItem("Access-Token"));
+            $.support.cors = true;
             var params = new URLSearchParams(window.location.search);
             $.getJSON("http://localhost:8080/posts/" + params.get("id"), function(data) {
                 var template = `
