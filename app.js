@@ -1,6 +1,6 @@
 var app = {}
 app.AppView = Backbone.View.extend({
-    el: "#container",
+    el: ".container",
     initialize: function() {
         this.render();
     },

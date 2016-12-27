@@ -20,35 +20,7 @@
         <style>*{word-wrap:break-word;max-width:100%}</style>
     </head>
     <body class="container">
-<!--        <script>
-alert(document.cookie);
-            $.getJSON("http://localhost:8080/posts", function(data) {
-                var template = `
-                    <div class="row">
-                        <div class="col-sm-3"></div>
-                        <h1 class="col-sm-6" style="text-align:center"><a href="index.html">CuBlog</a></h1><h4><a href="login.html">Login</a></h4>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-3"></div>
-                        <ul class="list-group col-sm-6">
-                            {{#.}}
-                                <li class="list-group-item">
-                                    <h4 class="list-group-item-heading"><a href="read.html?id={{id}}">{{id}} | {{title}}</a></h4>
-                                    <p class="list-group-item-text">
-                                    {{#private}} private {{/private}} {{^private}} public {{/private}} | {{cdate}} | {{mdate}} | <a href="">modify</a> | <a href="">delete</a>
-                                    </p>
-                                </li>
-                            {{/.}}
-                        </ul>
-                    </div>`;
-                var html = Mustache.to_html(template, data);
-                $("body").append(html);
-            });
-        </script>
-        -->
         <script src="app.js"></script>
-
-
     </body>
 </html>
 
