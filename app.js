@@ -1,6 +1,7 @@
 let app = {}
 
 app.PostPreview = Backbone.Model.extend({
+    idAttribute: "id"
 });
 
 app.PostPreviews = Backbone.Collection.extend({
@@ -8,7 +9,7 @@ app.PostPreviews = Backbone.Collection.extend({
 });
 
 app.PostPreviewView = Backbone.View.extend({
-    tagName: "div",
+    tagName: "tr",
     initialize: function() {
         this.template = _.template($(".post-preview-template").html());
     },
@@ -19,13 +20,12 @@ app.PostPreviewView = Backbone.View.extend({
 });
 
 app.PostPreviewsView = Backbone.View.extend({
-    el: ".container",
+    el: ".post-previews-view",
     initialize: function() {
         this.listenTo(this.collection, "update", this.render);
         this.collection.fetch();
     },
     render: function() {
-        alert("render!!");
         let self = this;
         _.each(this.collection.toArray(), function(model) {
             self.$el.append(new app.PostPreviewView({model: model}).render().$el);

@@ -19,12 +19,25 @@
 
         <style>*{word-wrap:break-word;max-width:100%}</style>
     </head>
-    <body class="container">
+    <body>
         <script type="text/template" class="post-preview-template">
-            <h1><%=title%></h1>
-            <h2><%=id%></h2>
-            <hr/>
+            <td><%=id%></td>
+            <td><%=title%></td>
+            <td><%=cdate%></td>
+            <td><%=mdate%></td>
         </script>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Title</th>
+                    <th>Created Date</th>
+                    <th>Last Modified Date</th>
+                </tr>
+            </thead>
+            <tbody class="post-previews-view">
+            </tbody>
+        </table>
         <script src="app.js"></script>
     </body>
 </html>
