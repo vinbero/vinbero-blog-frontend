@@ -20,15 +20,16 @@ app.PostPreviewView = Backbone.View.extend({
 });
 
 app.PostPreviewsView = Backbone.View.extend({
-    el: ".post-previews-view",
+    tagName: "div",
     initialize: function() {
+        this.template = _.template($(".post-previews-template").html());
         this.listenTo(this.collection, "update", this.render);
-//        this.collection.fetch();
     },
     render: function() {
         let self = this;
+        this.$el.html(this.template());
         _.each(this.collection.toArray(), function(model) {
-            self.$el.append(new app.PostPreviewView({model: model}).render().$el);
+            self.$el.find(".post-preview-views").append(new app.PostPreviewView({model: model}).render().$el);
         });
         return this;
     }
@@ -43,11 +44,10 @@ app.Router = Backbone.Router.extend({
         "deletePost/:id": "deletePost"
     },
     createPost: function() {
-        alert("createPost");
     },
     readPosts: function() {
         this.postPreviewsView.collection.fetch();
-        alert("readPosts");
+        $(".container").append(this.postPreviewsView.$el);
     },
     readPost: function(id) {
     },
