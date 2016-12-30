@@ -43,11 +43,20 @@
             </table>
         </script>
         <script type="text/template" class="post-template">
-            <h1><%=id%></h1>
-            <h1><%=title%></h1>
-            <h2><%=cdate%></h2>
-            <h2><%=mdate%></h2>
-            <h3><%=text%></h3>
+            <div class="row">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading"><%=id%> | <%=title%></div>
+                        <div class="panel-body">
+                            <%=text%>
+                        </div>
+                        <div class="panel-footer">
+                            <% if(private == true) { %> private <% } else { %> public <% } %> | <%=cdate%> | <%=mdate%> | modify | delete
+                        </div>
+                    </div>
+                </div>
+            </div>
         </script>
         <script type="text/template" class="login-template">
             <div class="row">
