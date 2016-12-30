@@ -58,18 +58,37 @@ app.PostView = Backbone.View.extend({
     }
 });
 
+app.LoginView = Backbone.View.extend({
+    tagName: "div",
+    initialize: function() {
+        this.template = _.template($(".login-template").html());
+        this.render();
+    },
+    render: function() {
+        this.$el.html(this.template());
+        return this;
+    }
+});
+
 app.Router = Backbone.Router.extend({
     routes: {
+        "login": "login",
         "createPost": "createPost",
         "readPosts": "readPosts",
         "readPost/:id": "readPost",
         "updatePost/:id": "updatePost",
         "deletePost/:id": "deletePost"
     },
+
     initialize: function(options) {
         for(let key in options) {
             this[key] = options[key];
         }
+    },
+
+    login: function() {
+        $(".container").empty();
+        $(".container").append(this.loginView.$el);
     },
     createPost: function() {
     },
@@ -94,7 +113,8 @@ app.Router = Backbone.Router.extend({
 
 app.postPreviews = new app.PostPreviews();
 app.postPreviewsView = new app.PostPreviewsView({collection: app.postPreviews});
-app.router = new app.Router({postPreviews: app.postPreviews, postPreviewsView: app.postPreviewsView});
+app.loginView = new app.LoginView();
+app.router = new app.Router({postPreviews: app.postPreviews, postPreviewsView: app.postPreviewsView, loginView: app.loginView});
 app.router.postPreviewsView = app.postPreviewsView;
 
 Backbone.history.start();
