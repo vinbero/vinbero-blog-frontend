@@ -20,20 +20,13 @@
         <!--        <style>*{word-wrap:break-word;max-width:100%}</style> -->
     </head>
     <body>
-        <script type="text/template" class="post-preview-template">
-            <td><%=id%></td>
-            <td><%=private%></td>
-            <td><%=title%></td>
-            <td><%=cdate%></td>
-            <td><%=mdate%></td>
-        </script>
         <script type="text/template" class="post-previews-template">
             <table class="table table-hover">
                 <thead>
                     <tr>
                         <th>Id</th>
-                        <th>Private</th>
                         <th>Title</th>
+                        <th>Private</th>
                         <th>Created Date</th>
                         <th>Last Modified Date</th>
                     </tr>
@@ -42,12 +35,19 @@
                 </tbody>
             </table>
         </script>
+        <script type="text/template" class="post-preview-template">
+            <td><%=id%></td>
+            <td><%=title%></td>
+            <td><%=private%></td>
+            <td><%=cdate%></td>
+            <td><%=mdate%></td>
+        </script>
         <script type="text/template" class="post-template">
             <h1><%=title%></h1>
             <hr/>
             <p><span class="glyphicon glyphicon-time"/> Created at <%=cdate%> Last Modified <%=mdate%></p>
             <hr/>
-            <p><%=text%></p>
+            <section><%=text%></section>
             <hr/>
             <div>
                 <span class="label label-default"><%=id%></span> <% if(private == true) { %> <span class="label label-danger">private</span> <% } else { %> <span class="label label-primary">public</span> <% } %> <button class="btn btn-primary btn-xs btn-">modify</button> <button class="btn btn-danger btn-xs">delete</button>
