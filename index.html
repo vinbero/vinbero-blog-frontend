@@ -17,7 +17,7 @@
 
         <!--        <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.2.1/mustache.min.js" type="text/javascript"></script>-->
 
-        <style>*{word-wrap:break-word;max-width:100%}</style>
+        <!--        <style>*{word-wrap:break-word;max-width:100%}</style> -->
     </head>
     <body>
         <script type="text/template" class="post-preview-template">
@@ -28,7 +28,7 @@
             <td><%=mdate%></td>
         </script>
         <script type="text/template" class="post-previews-template">
-            <table class="table">
+            <table class="table table-hover">
                 <thead>
                     <tr>
                         <th>Id</th>
@@ -74,8 +74,18 @@
                 </form>
             </div>
         </script>
-        <div class="container">
-        </div>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+            <div class="navbar-header">
+            <a class="navbar-brand" href="#">Cublog</a>
+            </div>
+                <ul class="nav navbar-nav">
+                    <li><a href="#readPosts">readPosts</a></li>
+                    <li><a href="#createPost">createPost</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="container"></div>
         <script src="app.js"></script>
     </body>
 </html>
