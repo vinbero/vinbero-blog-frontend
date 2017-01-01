@@ -1,16 +1,13 @@
 let app = {}
 
-app.PostPreview = Backbone.Model.extend({
-    idAttribute: "id"
-});
-
-app.PostPreviews = Backbone.Collection.extend({
-    url: "http://localhost:8080/posts"
-});
-
 app.Post = Backbone.Model.extend({
     idAttribute: "id",
     urlRoot: "http://localhost:8080/posts"
+});
+
+app.Posts = Backbone.Collection.extend({
+    url: "http://localhost:8080/posts",
+    model: app.Post
 });
 
 app.PostPreviewView = Backbone.View.extend({
@@ -60,6 +57,9 @@ app.PostView = Backbone.View.extend({
 
 app.LoginView = Backbone.View.extend({
     tagName: "div",
+    events: {
+        "click .login-button": "login"
+    },
     initialize: function() {
         this.template = _.template($(".login-template").html());
         this.render();
@@ -67,6 +67,21 @@ app.LoginView = Backbone.View.extend({
     render: function() {
         this.$el.html(this.template());
         return this;
+    },
+    login: function() {
+        $.post({url: "http://localhost:8080/tokens", data: JSON.stringify({
+            id: this.$el.find(".login-id").val(),
+            password: this.$el.find(".login-password").val()
+        }), dataType: "json"}).done(function(data, textStatus, jqXHR) {
+            sessionStorage.setItem("token", data);
+            alert(data);
+            alert(textStatus);
+            alert(jqXHR);
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            alert(jqXHR);
+            alert(textStatus);
+            alert(errorThrown);
+        });
     }
 });
 
@@ -90,13 +105,21 @@ app.Router = Backbone.Router.extend({
         $(".container").empty();
         $(".container").append(this.loginView.$el);
     },
+
     createPost: function() {
     },
+
     readPosts: function() {
-        this.postPreviews.fetch();
+        this.posts.fetch({
+            headers: {
+                "Authorization": "Bearer " + sessionStorage.getItem("token")
+            }
+        });
+
         $(".container").empty();
         $(".container").append(this.postPreviewsView.$el);
     },
+
     readPost: function(id) {
         let post = new app.Post();
         let postView = new app.PostView({model: post});
@@ -105,16 +128,18 @@ app.Router = Backbone.Router.extend({
         $(".container").empty();
         $(".container").append(postView.$el);
     },
+
     updatePost: function(id) {
     },
+
     deletePost: function(id) {
     }
 });
 
-app.postPreviews = new app.PostPreviews();
-app.postPreviewsView = new app.PostPreviewsView({collection: app.postPreviews});
+app.posts = new app.Posts();
+app.postPreviewsView = new app.PostPreviewsView({collection: app.posts});
 app.loginView = new app.LoginView();
-app.router = new app.Router({postPreviews: app.postPreviews, postPreviewsView: app.postPreviewsView, loginView: app.loginView});
+app.router = new app.Router({posts: app.posts, postPreviewsView: app.postPreviewsView, loginView: app.loginView});
 app.router.postPreviewsView = app.postPreviewsView;
 
 Backbone.history.start();
