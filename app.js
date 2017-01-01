@@ -102,8 +102,8 @@ app.Router = Backbone.Router.extend({
     },
 
     login: function() {
-        $(".container").empty();
-        $(".container").append(this.loginView.$el);
+        $(".content").empty();
+        $(".content").append(this.loginView.$el);
     },
 
     createPost: function() {
@@ -121,17 +121,21 @@ app.Router = Backbone.Router.extend({
 */
         });
 
-        $(".container").empty();
-        $(".container").append(this.postPreviewsView.$el);
+        $(".content").empty();
+        $(".content").append(this.postPreviewsView.$el);
     },
 
     readPost: function(id) {
         let post = new app.Post();
         let postView = new app.PostView({model: post});
         post.set({id: id});
-        post.fetch();
-        $(".container").empty();
-        $(".container").append(postView.$el);
+        post.fetch({
+            headers: {
+                "Authorization": "Bearer " + sessionStorage.getItem("token")
+            }
+        });
+        $(".content").empty();
+        $(".content").append(postView.$el);
     },
 
     updatePost: function(id) {

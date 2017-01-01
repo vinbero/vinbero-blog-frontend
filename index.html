@@ -43,25 +43,20 @@
             </table>
         </script>
         <script type="text/template" class="post-template">
-            <div class="row">
-                <div class="col-sm-4"></div>
-                <div class="col-sm-4">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading"><%=id%> | <%=title%></div>
-                        <div class="panel-body">
-                            <%=text%>
-                        </div>
-                        <div class="panel-footer">
-                            <% if(private == true) { %> private <% } else { %> public <% } %> | <%=cdate%> | <%=mdate%> | modify | delete
-                        </div>
-                    </div>
-                </div>
+            <h1><%=title%></h1>
+            <hr/>
+            <p><span class="glyphicon glyphicon-time"/> Created at <%=cdate%> Last Modified <%=mdate%></p>
+            <hr/>
+            <p><%=text%></p>
+            <hr/>
+            <div>
+                <span class="label label-default"><%=id%></span> <% if(private == true) { %> <span class="label label-danger">private</span> <% } else { %> <span class="label label-primary">public</span> <% } %> <button class="btn btn-primary btn-xs btn-">modify</button> <button class="btn btn-danger btn-xs">delete</button>
             </div>
         </script>
         <script type="text/template" class="login-template">
             <div class="row">
                 <div class="col-sm-4"></div>
-                <form class="col-sm-4">
+                <form class="col-sm-4 well">
                     <div class="form-group">
                         <label for="id">Id:</label>
                         <input type="id" class="login-id form-control" placeholder="Enter id">
@@ -70,11 +65,11 @@
                         <label for="password">Password:</label>
                         <input type="password" class="login-password form-control" placeholder="Enter password">
                     </div>
-                    <button type="submit" class="login-button btn btn-default">Submit</button>
+                    <button type="submit" class="login-button btn btn-success">Login</button>
                 </form>
             </div>
         </script>
-        <nav class="navbar navbar-default">
+        <nav class="navbar navbar-inverse">
             <div class="container-fluid">
             <div class="navbar-header">
             <a class="navbar-brand" href="#">Cublog</a>
@@ -82,10 +77,13 @@
                 <ul class="nav navbar-nav">
                     <li><a href="#readPosts">readPosts</a></li>
                     <li><a href="#createPost">createPost</a></li>
+                    <li><a href="#login">login</a></li>
                 </ul>
             </div>
         </nav>
-        <div class="container"></div>
+        <div class="container">
+            <div class="content"></div>
+        </div>
         <script src="app.js"></script>
     </body>
 </html>
