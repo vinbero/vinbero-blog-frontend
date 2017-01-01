@@ -114,6 +114,11 @@ app.Router = Backbone.Router.extend({
             headers: {
                 "Authorization": "Bearer " + sessionStorage.getItem("token")
             }
+/*
+            ,data: {
+                "page": 1
+            }
+*/
         });
 
         $(".container").empty();
