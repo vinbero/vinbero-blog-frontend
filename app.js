@@ -42,7 +42,6 @@ app.PostCreationView = Backbone.View.extend({
                 alert("error");
             }
         });
-        //Backbone.history.navigate("/readPosts", {trigger: true});
     }
 });
 
