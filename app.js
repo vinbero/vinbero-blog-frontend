@@ -29,13 +29,20 @@ app.PostCreationView = Backbone.View.extend({
             title: this.$el.find("input[name=post-title]").val(),
             private: this.$el.find("input[name=post-private]").is(":checked"),
             text: CKEDITOR.instances["post-text"].getData()
-        },
-        {
+        }, {
             headers: {
                 "Authorization": "Bearer " + sessionStorage.getItem("token")
             },
-            wait: true
+            wait: true,
+            success: function(model, response) {
+                model.set(response);
+                Backbone.history.navigate("/readPosts", {trigger: true});
+            },
+            error: function() {
+                alert("error");
+            }
         });
+        //Backbone.history.navigate("/readPosts", {trigger: true});
     }
 });
 
@@ -104,9 +111,13 @@ app.LoginView = Backbone.View.extend({
             password: this.$el.find("input[name=login-password]").val()
         }), dataType: "json"}).done(function(data, textStatus, jqXHR) {
             sessionStorage.setItem("token", data);
-            alert(data);
-            alert(textStatus);
-            alert(jqXHR);
+            app.posts.fetch({
+                headers: {
+                    Authorization: "Bearer " + sessionStorage.getItem("token")
+                }
+            }).done(function() {
+                Backbone.history.navigate("/readPosts", {trigger: true});
+            });
         }).fail(function(jqXHR, textStatus, errorThrown) {
             alert(jqXHR);
             alert(textStatus);
@@ -157,8 +168,8 @@ app.Router = Backbone.Router.extend({
 app.posts = new app.Posts();
 if(!_.isUndefined(sessionStorage.getItem("token"))) {
     app.posts.fetch({
-        "headers": {
-            "Authorization": "Bearer " + sessionStorage.getItem("token")
+        headers: {
+            Authorization: "Bearer " + sessionStorage.getItem("token")
         }
     }).done(function() {
         app.router = new app.Router();
