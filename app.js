@@ -13,7 +13,7 @@ app.Posts = Backbone.Collection.extend({
 app.PostCreationView = Backbone.View.extend({
     tagName: "div",
     events: {
-        "submit .post-creation-form": "postCreate"
+        "submit .post-creation-form": "onPostCreate"
     },
     initialize: function() {
         this.template = _.template($(".post-creation-template").html());
@@ -21,18 +21,20 @@ app.PostCreationView = Backbone.View.extend({
     },
     render: function() {
         this.$el.html(this.template());
+        return this;
     },
-    postCreate: function(submitEvent) {
-        submitEvent.preventDefault();
+    onPostCreate: function(event) {
+        event.preventDefault();
         app.posts.create({
-            "title": this.$el.find("input[name=post-title]").val(),
-            "private": this.$el.find("input[name=post-private]").is(":checked"),
-            "text": CKEDITOR.instances["post-text"].getData()
+            title: this.$el.find("input[name=post-title]").val(),
+            private: this.$el.find("input[name=post-private]").is(":checked"),
+            text: CKEDITOR.instances["post-text"].getData()
         },
         {
-            "headers": {
+            headers: {
                 "Authorization": "Bearer " + sessionStorage.getItem("token")
-            }
+            },
+            wait: true
         });
     }
 });
@@ -40,7 +42,7 @@ app.PostCreationView = Backbone.View.extend({
 app.PostPreviewView = Backbone.View.extend({
     tagName: "tr",
     events: {
-        "click": "readPost"
+        click: "onReadPost"
     },
     initialize: function() {
         this.template = _.template($(".post-preview-template").html());
@@ -49,7 +51,7 @@ app.PostPreviewView = Backbone.View.extend({
         this.$el.html(this.template(this.model.toJSON()));
         return this;
     },
-    readPost: function() {
+    onReadPost: function() {
         Backbone.history.navigate("readPost/" + this.model.id, {trigger: true});
     }
 });
@@ -85,7 +87,7 @@ app.PostReadView = Backbone.View.extend({
 app.LoginView = Backbone.View.extend({
     tagName: "div",
     events: {
-        "submit .login-form": "login"
+        "submit .login-form": "onLogin"
     },
     initialize: function() {
         this.template = _.template($(".login-template").html());
@@ -95,8 +97,8 @@ app.LoginView = Backbone.View.extend({
         this.$el.html(this.template());
         return this;
     },
-    login: function(submitEvent) {
-        submitEvent.preventDefault();
+    onLogin: function(event) {
+        event.preventDefault();
         $.post({url: "http://localhost:8080/tokens", data: JSON.stringify({
             id: this.$el.find("input[name=login-id]").val(),
             password: this.$el.find("input[name=login-password]").val()
@@ -122,49 +124,25 @@ app.Router = Backbone.Router.extend({
         "updatePost/:id": "updatePost",
         "deletePost/:id": "deletePost"
     },
-
-    initialize: function(options) {
-        for(let key in options) {
-            this[key] = options[key];
-        }
-    },
-
     login: function() {
         $(".content").empty();
-        $(".content").append(this.loginView.$el);
+        $(".content").append(new app.LoginView().$el);
     },
 
     createPost: function() {
-        this.postCreationView.render();
         $(".content").empty();
-        $(".content").append(this.postCreationView.$el);
+        $(".content").append(new app.PostCreationView().$el);
     },
 
     readPosts: function() {
-        this.posts.fetch({
-            "headers": {
-                "Authorization": "Bearer " + sessionStorage.getItem("token")
-            }
-/*
-            ,data: {
-                "page": 1
-            }
-*/
-        });
-
         $(".content").empty();
-        $(".content").append(this.postPreviewsView.$el);
+        $(".content").append(new app.PostPreviewsView({collection: app.posts}).render().$el);
     },
 
     readPost: function(id) {
-        let post = new app.Post();
+        let post = app.posts.get(id);
         let postReadView = new app.PostReadView({model: post});
-        post.set({id: id});
-        post.fetch({
-            "headers": {
-                "Authorization": "Bearer " + sessionStorage.getItem("token")
-            }
-        });
+        postReadView.render();
         $(".content").empty();
         $(".content").append(postReadView.$el);
     },
@@ -182,14 +160,12 @@ if(!_.isUndefined(sessionStorage.getItem("token"))) {
         "headers": {
             "Authorization": "Bearer " + sessionStorage.getItem("token")
         }
+    }).done(function() {
+        app.router = new app.Router();
+        Backbone.history.start();
     });
 } else
-    app.posts.fetch();
-
-app.postCreationView = new app.PostCreationView();
-app.postPreviewsView = new app.PostPreviewsView({collection: app.posts});
-app.loginView = new app.LoginView();
-app.router = new app.Router({posts: app.posts, postCreationView: app.postCreationView, postPreviewsView: app.postPreviewsView, loginView: app.loginView});
-app.router.postPreviewsView = app.postPreviewsView;
-
-Backbone.history.start();
+    app.posts.fetch().done(function() {
+        app.router = new app.Router();
+        Backbone.history.start();
+    });
