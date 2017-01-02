@@ -24,10 +24,17 @@ app.PostCreationView = Backbone.View.extend({
     },
     postCreate: function(submitEvent) {
         submitEvent.preventDefault();
-        alert(this.$el.find("input[name=post-title]").val());
-        alert(this.$el.find("input[name=post-private]").is(":checked"));
-        alert(CKEDITOR.instances["post-text"].getData());
-    },
+        app.posts.create({
+            "title": this.$el.find("input[name=post-title]").val(),
+            "private": this.$el.find("input[name=post-private]").is(":checked"),
+            "text": CKEDITOR.instances["post-text"].getData()
+        },
+        {
+            "headers": {
+                "Authorization": "Bearer " + sessionStorage.getItem("token")
+            }
+        });
+    }
 });
 
 app.PostPreviewView = Backbone.View.extend({
@@ -51,7 +58,7 @@ app.PostPreviewsView = Backbone.View.extend({
     tagName: "div",
     initialize: function() {
         this.template = _.template($(".post-previews-template").html());
-        this.listenTo(this.collection, "update", this.render);
+        this.listenTo(this.collection, "sync", this.render);
     },
     render: function() {
         let self = this;
@@ -135,7 +142,7 @@ app.Router = Backbone.Router.extend({
 
     readPosts: function() {
         this.posts.fetch({
-            headers: {
+            "headers": {
                 "Authorization": "Bearer " + sessionStorage.getItem("token")
             }
 /*
@@ -154,7 +161,7 @@ app.Router = Backbone.Router.extend({
         let postReadView = new app.PostReadView({model: post});
         post.set({id: id});
         post.fetch({
-            headers: {
+            "headers": {
                 "Authorization": "Bearer " + sessionStorage.getItem("token")
             }
         });
@@ -170,6 +177,15 @@ app.Router = Backbone.Router.extend({
 });
 
 app.posts = new app.Posts();
+if(!_.isUndefined(sessionStorage.getItem("token"))) {
+    app.posts.fetch({
+        "headers": {
+            "Authorization": "Bearer " + sessionStorage.getItem("token")
+        }
+    });
+} else
+    app.posts.fetch();
+
 app.postCreationView = new app.PostCreationView();
 app.postPreviewsView = new app.PostPreviewsView({collection: app.posts});
 app.loginView = new app.LoginView();
