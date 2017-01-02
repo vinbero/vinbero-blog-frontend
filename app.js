@@ -10,6 +10,25 @@ app.Posts = Backbone.Collection.extend({
     model: app.Post
 });
 
+app.PostCreationView = Backbone.View.extend({
+    tagName: "div",
+    events: {
+        "submit .post-creation-form": "postCreate"
+    },
+    initialize: function() {
+        this.template = _.template($(".post-creation-template").html());
+        this.render();
+    },
+    render: function() {
+        this.$el.html(this.template());
+    },
+    postCreate: function(submitEvent) {
+        submitEvent.preventDefault();
+        alert(this.$el.find("input[name=post-title]").val());
+        alert(CKEDITOR.instances["post-text"].getData());
+    },
+});
+
 app.PostPreviewView = Backbone.View.extend({
     tagName: "tr",
     events: {
@@ -43,10 +62,10 @@ app.PostPreviewsView = Backbone.View.extend({
     }
 });
 
-app.PostView = Backbone.View.extend({
+app.PostReadView = Backbone.View.extend({
     tagName: "div",
     initialize: function() {
-        this.template = _.template($(".post-template").html());
+        this.template = _.template($(".post-read-template").html());
         this.listenTo(this.model, "sync", this.render);
     },
     render: function() {
@@ -58,7 +77,7 @@ app.PostView = Backbone.View.extend({
 app.LoginView = Backbone.View.extend({
     tagName: "div",
     events: {
-        "click .login-button": "login"
+        "submit .login-form": "login"
     },
     initialize: function() {
         this.template = _.template($(".login-template").html());
@@ -68,10 +87,11 @@ app.LoginView = Backbone.View.extend({
         this.$el.html(this.template());
         return this;
     },
-    login: function() {
+    login: function(submitEvent) {
+        submitEvent.preventDefault();
         $.post({url: "http://localhost:8080/tokens", data: JSON.stringify({
-            id: this.$el.find(".login-id").val(),
-            password: this.$el.find(".login-password").val()
+            id: this.$el.find("input[name=login-id]").val(),
+            password: this.$el.find("input[name=login-password]").val()
         }), dataType: "json"}).done(function(data, textStatus, jqXHR) {
             sessionStorage.setItem("token", data);
             alert(data);
@@ -107,6 +127,9 @@ app.Router = Backbone.Router.extend({
     },
 
     createPost: function() {
+        this.postCreationView.render();
+        $(".content").empty();
+        $(".content").append(this.postCreationView.$el);
     },
 
     readPosts: function() {
@@ -127,7 +150,7 @@ app.Router = Backbone.Router.extend({
 
     readPost: function(id) {
         let post = new app.Post();
-        let postView = new app.PostView({model: post});
+        let postReadView = new app.PostReadView({model: post});
         post.set({id: id});
         post.fetch({
             headers: {
@@ -135,7 +158,7 @@ app.Router = Backbone.Router.extend({
             }
         });
         $(".content").empty();
-        $(".content").append(postView.$el);
+        $(".content").append(postReadView.$el);
     },
 
     updatePost: function(id) {
@@ -146,9 +169,10 @@ app.Router = Backbone.Router.extend({
 });
 
 app.posts = new app.Posts();
+app.postCreationView = new app.PostCreationView();
 app.postPreviewsView = new app.PostPreviewsView({collection: app.posts});
 app.loginView = new app.LoginView();
-app.router = new app.Router({posts: app.posts, postPreviewsView: app.postPreviewsView, loginView: app.loginView});
+app.router = new app.Router({posts: app.posts, postCreationView: app.postCreationView, postPreviewsView: app.postPreviewsView, loginView: app.loginView});
 app.router.postPreviewsView = app.postPreviewsView;
 
 Backbone.history.start();
