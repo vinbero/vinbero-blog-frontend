@@ -25,7 +25,11 @@
                     <fieldset class="well">
                         <div class="form-group">
                             <label>Title:</label>
-                            <input type="text" name="post-title" class="form-control" placeholder="Enter title">
+                            <input type="text" name="post-title" class="form-control" placeholder="Enter title"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Private:</label>
+                            <input type="checkbox" name="post-private"/>
                         </div>
                         <div class="form-group">
                             <label>Text:</label>
@@ -66,7 +70,7 @@
         <script type="text/template" class="post-read-template">
             <h1><%=title%></h1>
             <hr/>
-            <p><span class="glyphicon glyphicon-time"/> Created at <%=cdate%> Last Modified <%=mdate%></p>
+            <p><span class="glyphicon glyphicon-time"/> Created at <%=cdate%> <span class="glyphicon glyphicon-time"/> Last Modified at <%=mdate%></p>
             <hr/>
             <section><%=text%></section>
             <hr/>
@@ -81,11 +85,11 @@
                     <fieldset class="well">
                         <div class="form-group">
                             <label>Id:</label>
-                            <input type="text" name="login-id" class="form-control" placeholder="Enter id">
+                            <input type="text" name="login-id" class="form-control" placeholder="Enter id"/>
                         </div>
                         <div class="form-group">
                             <label>Password:</label>
-                            <input type="password" name="login-password" class="form-control" placeholder="Enter password">
+                            <input type="password" name="login-password" class="form-control" placeholder="Enter password"/>
                         </div>
                         <button type="submit" class="btn btn-success">Login</button>
                     </fieldset>

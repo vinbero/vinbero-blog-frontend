@@ -25,6 +25,7 @@ app.PostCreationView = Backbone.View.extend({
     postCreate: function(submitEvent) {
         submitEvent.preventDefault();
         alert(this.$el.find("input[name=post-title]").val());
+        alert(this.$el.find("input[name=post-private]").is(":checked"));
         alert(CKEDITOR.instances["post-text"].getData());
     },
 });
