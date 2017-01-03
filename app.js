@@ -240,6 +240,17 @@ app.NavBarView = Backbone.View.extend({
     }
 });
 
+app.EmptyView = Backbone.View.extend({
+    initialize: function() {
+        this.template = _.template($(".empty-template").html());
+        this.render();
+    },
+    render: function() {
+        this.$el.html(this.template());
+        return this;
+    }
+});
+
 app.Router = Backbone.Router.extend({
     routes: {
         "login": "onLogin",
@@ -278,7 +289,10 @@ app.Router = Backbone.Router.extend({
         $(".nav-bar").append(new app.NavBarView().render().$el);
 
         $(".content").empty();
-        $(".content").append(new app.PostIndexView({collection: app.posts}).render().$el);
+        if(app.posts.size() > 0)
+            $(".content").append(new app.PostIndexView({collection: app.posts}).render().$el);
+        else
+            $(".content").append(new app.EmptyView().render().$el);
     },
     onPost: function(id) {
         $(".nav-bar").empty();
@@ -341,12 +355,11 @@ app.Router = Backbone.Router.extend({
             });
         }
         if(!_.isUndefined(post)) {
-            let postView = new app.PostView({model: post});
-            postView.render();
             $(".content").empty();
-            $(".content").append(postView.$el);
+            $(".content").append(new app.PostView({model: post}).render().$el);
         } else {
-            // do something
+            $(".content").empty();
+            $(".content").append(new app.EmptyView().render().$el);
         }
     }
 });
