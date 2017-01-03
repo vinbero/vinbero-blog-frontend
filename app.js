@@ -32,7 +32,7 @@ app.PostCreateView = Backbone.View.extend({
             text: CKEDITOR.instances["post-text"].getData()
         }, {
             headers: {
-                "Authorization": "Bearer " + sessionStorage.getItem("token")
+                "Authorization": sessionStorage.getItem("Cublog.tokenString")
             },
             wait: true,
             success: function(model, response) {
@@ -129,7 +129,7 @@ app.PostEditView = Backbone.View.extend({
             text: CKEDITOR.instances["post-text"].getData()
         }, {
             headers: {
-                "Authorization": "Bearer " + sessionStorage.getItem("token")
+                "Authorization": sessionStorage.getItem("Cublog.tokenString")
             },
             wait: true,
             success: function(model, response) {
@@ -168,7 +168,7 @@ app.PostDeleteView = Backbone.View.extend({
         event.preventDefault();
         this.model.destroy({
             headers: {
-                Authorization: "Bearer " + sessionStorage.getItem("token")
+                Authorization: sessionStorage.getItem("Cublog.tokenString")
             },
             wait: true,
             success: function(model, response) {
@@ -208,10 +208,10 @@ app.LoginView = Backbone.View.extend({
             id: this.$el.find("input[name=login-id]").val(),
             password: this.$el.find("input[name=login-password]").val()
         }), dataType: "json"}).done(function(data, textStatus, jqXHR) {
-            sessionStorage.setItem("token", data);
+            sessionStorage.setItem("Cublog.tokenString", "Bearer " + data);
             app.posts.fetch({
                 headers: {
-                    Authorization: "Bearer " + sessionStorage.getItem("token")
+                    Authorization: sessionStorage.getItem("Cublog.tokenString")
                 }
             }).done(function() {
                 window.history.back();
@@ -297,25 +297,18 @@ app.Router = Backbone.Router.extend({
             $(".content").empty();
             $(".content").append(postView.$el);
         } else {
+            // do something
         }
     }
 });
 
 app.posts = new app.Posts();
-if(!_.isUndefined(sessionStorage.getItem("token"))) {
-    app.posts.fetch({
-        headers: {
-            Authorization: "Bearer " + sessionStorage.getItem("token")
-        },
-        success: function() {
-            app.router = new app.Router();
-            Backbone.history.start();
-        }
-    });
-} else
-    app.posts.fetch({
-        success: function() {
-            app.router = new app.Router();
-            Backbone.history.start();
-        }
-    });
+app.posts.fetch({
+    headers: {
+        Authorization: sessionStorage.getItem("Cublog.tokenString")
+    },
+    success: function() {
+        app.router = new app.Router();
+        Backbone.history.start();
+    }
+});
