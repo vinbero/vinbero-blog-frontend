@@ -72,7 +72,6 @@ app.PostPreviewsView = Backbone.View.extend({
         let self = this;
         this.$el.html(this.template());
         this.collection.forEach(function(model) {
-            alert(JSON.stringify(model));
             self.$el.find(".post-preview-views").append(new app.PostPreviewView({model: model}).render().$el);
         });
         return this;
