@@ -13,7 +13,8 @@ app.Posts = Backbone.Collection.extend({
 app.PostCreateView = Backbone.View.extend({
     tagName: "div",
     events: {
-        "submit .post-create-form": "onPostCreate"
+        "submit .post-create-form": "onPostCreate",
+        "click .cancel-button": "onCancel"
     },
     initialize: function() {
         this.template = _.template($(".post-create-template").html());
@@ -45,6 +46,10 @@ app.PostCreateView = Backbone.View.extend({
                     alert(response.status)
             }
         });
+    },
+    onCancel: function(event) {
+        event.preventDefault();
+        window.history.back();
     }
 });
 
@@ -105,7 +110,8 @@ app.PostView = Backbone.View.extend({
 app.PostEditView = Backbone.View.extend({
     tagName: "div",
     events: {
-        "submit .post-edit-form": "onPostEdit"
+        "submit .post-edit-form": "onPostEdit",
+        "click .cancel-button": "onCancel"
     },
     initialize: function() {
         this.template = _.template($(".post-edit-template").html());
@@ -137,6 +143,10 @@ app.PostEditView = Backbone.View.extend({
                     alert(response.status)
             }
         });
+    },
+    onCancel: function(event) {
+        event.preventDefault();
+        window.history.back();
     }
 });
 
@@ -144,7 +154,7 @@ app.PostDeleteView = Backbone.View.extend({
     tagName: "div",
     events: {
         "click .post-delete-button": "onPostDelete",
-        "click .back-button": "onBack"
+        "click .cancel-button": "onCancel"
     },
     initialize: function() {
         this.template = _.template($(".post-delete-template").html());
@@ -173,7 +183,7 @@ app.PostDeleteView = Backbone.View.extend({
             }
         });
     },
-    onBack: function() {
+    onCancel: function(event) {
         window.history.back();
     }
 });
@@ -181,7 +191,8 @@ app.PostDeleteView = Backbone.View.extend({
 app.LoginView = Backbone.View.extend({
     tagName: "div",
     events: {
-        "submit .login-form": "onLogin"
+        "submit .login-form": "onLogin",
+        "click .cancel-button": "onCancel"
     },
     initialize: function() {
         this.template = _.template($(".login-template").html());
@@ -203,7 +214,7 @@ app.LoginView = Backbone.View.extend({
                     Authorization: "Bearer " + sessionStorage.getItem("token")
                 }
             }).done(function() {
-                Backbone.history.navigate("/index", {trigger: true});
+                window.history.back();
             });
         }).fail(function(jqXHR, textStatus, errorThrown) {
             if(jqXHR.status == 403)
@@ -211,6 +222,10 @@ app.LoginView = Backbone.View.extend({
             else
                 alert("Server error");
         });
+    },
+    onCancel: function(event) {
+        event.preventDefault();
+        window.history.back();
     }
 });
 
