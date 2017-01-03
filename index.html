@@ -20,9 +20,10 @@
     <body>
         <script type="text/template" class="post-creation-template">
             <div class="row">
-                <div class="col-sm-3"></div>
-                <form class="post-creation-form col-sm-6">
+                <div class="col-sm-2"></div>
+                <form class="post-creation-form col-sm-8">
                     <fieldset class="well">
+                        <h2>New Post</h2>
                         <div class="form-group">
                             <label>Title:</label>
                             <input type="text" name="post-title" class="form-control" placeholder="Enter title"/>
@@ -80,9 +81,10 @@
         </script>
         <script type="text/template" class="post-modification-template">
             <div class="row">
-                <div class="col-sm-3"></div>
-                <form class="post-modification-form col-sm-6">
+                <div class="col-sm-2"></div>
+                <form class="post-modification-form col-sm-8">
                     <fieldset class="well">
+                        <h2>Edit Post</h2>
                         <div class="form-group">
                             <label>Title:</label>
                             <input type="text" name="post-title" class="form-control" placeholder="Enter title" value="<%=title%>"/>
@@ -113,6 +115,7 @@
                 <div class="col-sm-4"></div>
                 <form class="login-form col-sm-4">
                     <fieldset class="well">
+                        <h2>Login Required</h2>
                         <div class="form-group">
                             <label>Id:</label>
                             <input type="text" name="login-id" class="form-control" placeholder="Enter id"/>
@@ -133,9 +136,9 @@
             <a class="navbar-brand" href="#">Cublog</a>
             </div>
                 <ul class="nav navbar-nav">
-                    <li><a href="#readPosts">readPosts</a></li>
-                    <li><a href="#createPost">createPost</a></li>
-                    <li><a href="#login">login</a></li>
+                    <li><a href="#readPosts">Posts</a></li>
+                    <li><a href="#createPost">New Post</a></li>
+                    <li><a href="#login">Login</a></li>
                 </ul>
             </div>
         </nav>

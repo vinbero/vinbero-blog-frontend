@@ -61,7 +61,7 @@ app.PostPreviewView = Backbone.View.extend({
         return this;
     },
     onReadPost: function() {
-        Backbone.history.navigate("readPost/" + this.model.get("id"), {trigger: true});
+        Backbone.history.navigate("readPost/" + this.model.id, {trigger: true});
     }
 });
 
@@ -95,24 +95,26 @@ app.PostReadView = Backbone.View.extend({
         return this;
     },
     onModifyPost: function() {
-        Backbone.history.navigate("/modifyPost/" + this.model.get("id"), {trigger: true});
+        Backbone.history.navigate("/modifyPost/" + this.model.id, {trigger: true});
     },
     onDeletePost: function() {
-        let modelId = this.model.get("id");
         this.model.destroy({
             headers: {
                 Authorization: "Bearer " + sessionStorage.getItem("token")
+            },
+            wait: true,
+            success: function(model, response) {
+                app.posts.remove(model.id);
+                Backbone.history.navigate("/readPosts", {trigger: true});
+            },
+            error: function(model, response, options) {
+                if(response.status == 403)
+                    Backbone.history.navigate("/login", {trigger: true});
+                else
+                    alert(textStatus.state);
             }
-        }).done(function() {
-            app.posts.remove(modelId);
-            Backbone.history.navigate("/readPosts", {trigger: true});
-        }).fail(function(jqXHR, textStatus, errorThrown) {
-            if(textStatus.status == 403)
-                Backbone.history.navigate("/login", {trigger: true});
-            else
-                alert(textStatus.state);
         });
-    },
+    }
 });
 
 app.PostModificationView = Backbone.View.extend({
@@ -198,7 +200,8 @@ app.Router = Backbone.Router.extend({
         "readPosts": "readPosts",
         "readPost/:id": "readPost",
         "modifyPost/:id": "modifyPost",
-        "deletePost/:id": "deletePost"
+        "deletePost/:id": "deletePost",
+        "*home": "home"
     },
     login: function() {
         $(".content").empty();
@@ -240,6 +243,17 @@ app.Router = Backbone.Router.extend({
     },
 
     deletePost: function(id) {
+    },
+    home: function() {
+        let post = app.posts.max(function(post) {
+            return post.id;
+        });
+        if(!_.isUndefined(post)) {
+            let postReadView = new app.PostReadView({model: post});
+            postReadView.render();
+            $(".content").empty();
+            $(".content").append(postReadView.$el);
+        }
     }
 });
 
@@ -248,13 +262,16 @@ if(!_.isUndefined(sessionStorage.getItem("token"))) {
     app.posts.fetch({
         headers: {
             Authorization: "Bearer " + sessionStorage.getItem("token")
+        },
+        success: function() {
+            app.router = new app.Router();
+            Backbone.history.start();
         }
-    }).done(function() {
-        app.router = new app.Router();
-        Backbone.history.start();
     });
 } else
-    app.posts.fetch().done(function() {
-        app.router = new app.Router();
-        Backbone.history.start();
+    app.posts.fetch({
+        success: function() {
+            app.router = new app.Router();
+            Backbone.history.start();
+        }
     });
