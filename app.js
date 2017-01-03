@@ -229,9 +229,21 @@ app.LoginView = Backbone.View.extend({
     }
 });
 
+app.NavBarView = Backbone.View.extend({
+    initialize: function() {
+        this.template = _.template($(".nav-bar-template").html());
+        this.render();
+    },
+    render: function() {
+        this.$el.html(this.template({loggedIn: app.isLoggedIn()}));
+        return this;
+    }
+});
+
 app.Router = Backbone.Router.extend({
     routes: {
         "login": "onLogin",
+        "logout": "onLogout",
         "create": "onCreate",
         "index": "onIndex",
         "post/:id": "onPost",
@@ -240,11 +252,21 @@ app.Router = Backbone.Router.extend({
         "*home": "onHome"
     },
     onLogin: function() {
+        $(".nav-bar").empty();
+        $(".nav-bar").append(new app.NavBarView().render().$el);
+
         $(".content").empty();
         $(".content").append(new app.LoginView().$el);
     },
+    onLogout: function() {
+        app.logout();
+        window.history.back();
+    },
     onCreate: function() {
-        if(_.isNull(sessionStorage.getItem("cublog.tokenString")))
+        $(".nav-bar").empty();
+        $(".nav-bar").append(new app.NavBarView().render().$el);
+
+        if(app.isLoggedIn())
             Backbone.history.navigate("/login", {trigger: true});
         else {
             $(".content").empty();
@@ -252,10 +274,16 @@ app.Router = Backbone.Router.extend({
         }
     },
     onIndex: function() {
+        $(".nav-bar").empty();
+        $(".nav-bar").append(new app.NavBarView().render().$el);
+
         $(".content").empty();
         $(".content").append(new app.PostIndexView({collection: app.posts}).render().$el);
     },
     onPost: function(id) {
+        $(".nav-bar").empty();
+        $(".nav-bar").append(new app.NavBarView().render().$el);
+
         let post = app.posts.get(id);
         if(!_.isUndefined(post)) {
             let postView = new app.PostView({model: post});
@@ -267,7 +295,10 @@ app.Router = Backbone.Router.extend({
         }
     },
     onEdit: function(id) {
-        if(_.isNull(sessionStorage.getItem("cublog.tokenString")))
+        $(".nav-bar").empty();
+        $(".nav-bar").append(new app.NavBarView().render().$el);
+
+        if(app.isLoggedIn())
             Backbone.history.navigate("/login", {trigger: true});
         else {
             let post = app.posts.get(id);
@@ -282,7 +313,10 @@ app.Router = Backbone.Router.extend({
         }
     },
     onDelete: function(id) {
-        if(_.isNull(sessionStorage.getItem("cublog.tokenString")))
+        $(".nav-bar").empty();
+        $(".nav-bar").append(new app.NavBarView().render().$el);
+
+        if(app.isLoggedIn())
             Backbone.history.navigate("/login", {trigger: true});
         else {
             let post = app.posts.get(id);
@@ -297,6 +331,9 @@ app.Router = Backbone.Router.extend({
         }
     },
     onHome: function() {
+        $(".nav-bar").empty();
+        $(".nav-bar").append(new app.NavBarView().render().$el);
+
         let post;
         if(app.posts.size() != 0) {
             post = app.posts.max(function(post) {
@@ -313,6 +350,13 @@ app.Router = Backbone.Router.extend({
         }
     }
 });
+
+app.logout = function() {
+    sessionStorage.removeItem("cublog.tokenString");
+};
+app.isLoggedIn = function() {
+    return _.isNull(sessionStorage.getItem("cublog.tokenString"));
+}
 
 app.posts = new app.Posts();
 app.posts.fetch({
