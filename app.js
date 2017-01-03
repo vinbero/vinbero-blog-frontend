@@ -32,7 +32,7 @@ app.PostCreateView = Backbone.View.extend({
             text: CKEDITOR.instances["post-text"].getData()
         }, {
             headers: {
-                "Authorization": sessionStorage.getItem("Cublog.tokenString")
+                "Authorization": sessionStorage.getItem("cublog.tokenString")
             },
             wait: true,
             success: function(model, response) {
@@ -129,7 +129,7 @@ app.PostEditView = Backbone.View.extend({
             text: CKEDITOR.instances["post-text"].getData()
         }, {
             headers: {
-                "Authorization": sessionStorage.getItem("Cublog.tokenString")
+                "Authorization": sessionStorage.getItem("cublog.tokenString")
             },
             wait: true,
             success: function(model, response) {
@@ -168,7 +168,7 @@ app.PostDeleteView = Backbone.View.extend({
         event.preventDefault();
         this.model.destroy({
             headers: {
-                Authorization: sessionStorage.getItem("Cublog.tokenString")
+                Authorization: sessionStorage.getItem("cublog.tokenString")
             },
             wait: true,
             success: function(model, response) {
@@ -208,10 +208,10 @@ app.LoginView = Backbone.View.extend({
             id: this.$el.find("input[name=login-id]").val(),
             password: this.$el.find("input[name=login-password]").val()
         }), dataType: "json"}).done(function(data, textStatus, jqXHR) {
-            sessionStorage.setItem("Cublog.tokenString", "Bearer " + data);
+            sessionStorage.setItem("cublog.tokenString", "Bearer " + data);
             app.posts.fetch({
                 headers: {
-                    Authorization: sessionStorage.getItem("Cublog.tokenString")
+                    Authorization: sessionStorage.getItem("cublog.tokenString")
                 }
             }).done(function() {
                 window.history.back();
@@ -305,7 +305,7 @@ app.Router = Backbone.Router.extend({
 app.posts = new app.Posts();
 app.posts.fetch({
     headers: {
-        Authorization: sessionStorage.getItem("Cublog.tokenString")
+        Authorization: sessionStorage.getItem("cublog.tokenString")
     },
     success: function() {
         app.router = new app.Router();
