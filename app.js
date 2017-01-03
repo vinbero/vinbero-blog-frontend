@@ -92,7 +92,7 @@ app.PostReadView = Backbone.View.extend({
         return this;
     },
     onModifyPost: function() {
-        alert("modify");
+        Backbone.history.navigate("/modifyPost/" + this.model.get("id"), {trigger: true});
     },
     onDeletePost: function() {
         let modelId = this.model.get("id");
@@ -108,6 +108,43 @@ app.PostReadView = Backbone.View.extend({
         });
     },
 });
+
+app.PostModificationView = Backbone.View.extend({
+    tagName: "div",
+    events: {
+        "submit .post-modification-form": "onPostModify"
+    },
+    initialize: function() {
+        this.template = _.template($(".post-modification-template").html());
+        this.render();
+    },
+    render: function() {
+        this.$el.html(this.template(this.model.toJSON()));
+        return this;
+    },
+    onPostModify: function(event) {
+        event.preventDefault();
+        this.model.save({
+            title: this.$el.find("input[name=post-title]").val(),
+            private: this.$el.find("input[name=post-private]").is(":checked"),
+            text: CKEDITOR.instances["post-text"].getData()
+        }, {
+            headers: {
+                "Authorization": "Bearer " + sessionStorage.getItem("token")
+            },
+            wait: true,
+            success: function(model, response) {
+                model.set(response);
+                Backbone.history.navigate("/readPosts", {trigger: true});
+            },
+            error: function() {
+                alert("error");
+            }
+        });
+    }
+});
+
+
 
 app.LoginView = Backbone.View.extend({
     tagName: "div",
@@ -137,9 +174,7 @@ app.LoginView = Backbone.View.extend({
                 Backbone.history.navigate("/readPosts", {trigger: true});
             });
         }).fail(function(jqXHR, textStatus, errorThrown) {
-            alert(jqXHR);
-            alert(textStatus);
-            alert(errorThrown);
+            alert("Login Failed");
         });
     }
 });
@@ -150,7 +185,7 @@ app.Router = Backbone.Router.extend({
         "createPost": "createPost",
         "readPosts": "readPosts",
         "readPost/:id": "readPost",
-        "updatePost/:id": "updatePost",
+        "modifyPost/:id": "modifyPost",
         "deletePost/:id": "deletePost"
     },
     login: function() {
@@ -180,7 +215,16 @@ app.Router = Backbone.Router.extend({
         }
     },
 
-    updatePost: function(id) {
+    modifyPost: function(id) {
+        let post = app.posts.get(id);
+        if(!_.isUndefined(post)) {
+            let postModificationView = new app.PostModificationView({model: post});
+            postModificationView.render();
+            $(".content").empty();
+            $(".content").append(postModificationView.$el);
+        } else {
+            alert("Wrong post id");
+        }
     },
 
     deletePost: function(id) {
