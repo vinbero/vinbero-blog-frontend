@@ -10,13 +10,13 @@ app.Posts = Backbone.Collection.extend({
     model: app.Post
 });
 
-app.PostCreationView = Backbone.View.extend({
+app.PostCreateView = Backbone.View.extend({
     tagName: "div",
     events: {
-        "submit .post-creation-form": "onPostCreate"
+        "submit .post-create-form": "onPostCreate"
     },
     initialize: function() {
-        this.template = _.template($(".post-creation-template").html());
+        this.template = _.template($(".post-create-template").html());
         this.render();
     },
     render: function() {
@@ -36,7 +36,7 @@ app.PostCreationView = Backbone.View.extend({
             wait: true,
             success: function(model, response) {
                 model.set(response);
-                Backbone.history.navigate("/readPosts", {trigger: true});
+                Backbone.history.navigate("/index", {trigger: true});
             },
             error: function(model, response, options) {
                 if(response.status == 403)
@@ -48,89 +48,74 @@ app.PostCreationView = Backbone.View.extend({
     }
 });
 
-app.PostPreviewView = Backbone.View.extend({
+app.PostIndexItemView = Backbone.View.extend({
     tagName: "tr",
     events: {
-        click: "onReadPost"
+        click: "onPost"
     },
     initialize: function() {
-        this.template = _.template($(".post-preview-template").html());
+        this.template = _.template($(".post-index-item-template").html());
     },
     render: function() {
         this.$el.html(this.template(this.model.toJSON()));
         return this;
     },
-    onReadPost: function() {
-        Backbone.history.navigate("readPost/" + this.model.id, {trigger: true});
+    onPost: function() {
+        Backbone.history.navigate("post/" + this.model.id, {trigger: true});
     }
 });
 
-app.PostPreviewsView = Backbone.View.extend({
+app.PostIndexView = Backbone.View.extend({
     tagName: "div",
     initialize: function() {
-        this.template = _.template($(".post-previews-template").html());
+        this.template = _.template($(".post-index-template").html());
         this.listenTo(this.collection, "sync", this.render);
     },
     render: function() {
         let self = this;
         this.$el.html(this.template());
         this.collection.forEach(function(model) {
-            self.$el.find(".post-preview-views").append(new app.PostPreviewView({model: model}).render().$el);
+            self.$el.find(".post-index-view").append(new app.PostIndexItemView({model: model}).render().$el);
         });
         return this;
     }
 });
 
-app.PostReadView = Backbone.View.extend({
+app.PostView = Backbone.View.extend({
     tagName: "div",
     events: {
-        "click .post-modification-button": "onModifyPost",
-        "click .post-deletion-button": "onDeletePost"
+        "click .post-edit-button": "onPostEdit",
+        "click .post-delete-button": "onPostDelete"
     },
     initialize: function() {
-        this.template = _.template($(".post-read-template").html());
+        this.template = _.template($(".post-template").html());
     },
     render: function() {
         this.$el.html(this.template(this.model.toJSON()));
         return this;
     },
-    onModifyPost: function() {
-        Backbone.history.navigate("/modifyPost/" + this.model.id, {trigger: true});
+    onPostEdit: function() {
+        Backbone.history.navigate("/edit/" + this.model.id, {trigger: true});
     },
-    onDeletePost: function() {
-        this.model.destroy({
-            headers: {
-                Authorization: "Bearer " + sessionStorage.getItem("token")
-            },
-            wait: true,
-            success: function(model, response) {
-                app.posts.remove(model.id);
-                Backbone.history.navigate("/readPosts", {trigger: true});
-            },
-            error: function(model, response, options) {
-                if(response.status == 403)
-                    Backbone.history.navigate("/login", {trigger: true});
-                else
-                    alert(textStatus.state);
-            }
-        });
+    onPostDelete: function() {
+        Backbone.history.navigate("/delete/" + this.model.id, {trigger: true});
     }
 });
 
-app.PostModificationView = Backbone.View.extend({
+app.PostEditView = Backbone.View.extend({
     tagName: "div",
     events: {
-        "submit .post-modification-form": "onPostModify"
+        "submit .post-edit-form": "onPostEdit"
     },
     initialize: function() {
-        this.template = _.template($(".post-modification-template").html());
+        this.template = _.template($(".post-edit-template").html());
         this.render();
     },
     render: function() {
         this.$el.html(this.template(this.model.toJSON()));
         return this;
     },
-    onPostModify: function(event) {
+    onPostEdit: function(event) {
         event.preventDefault();
         this.model.save({
             title: this.$el.find("input[name=post-title]").val(),
@@ -143,7 +128,7 @@ app.PostModificationView = Backbone.View.extend({
             wait: true,
             success: function(model, response) {
                 model.set(response);
-                Backbone.history.navigate("/readPosts", {trigger: true});
+                Backbone.history.navigate("/index", {trigger: true});
             },
             error: function(model, response, options) {
                 if(response.status == 403)
@@ -155,7 +140,43 @@ app.PostModificationView = Backbone.View.extend({
     }
 });
 
-
+app.PostDeleteView = Backbone.View.extend({
+    tagName: "div",
+    events: {
+        "click .post-delete-button": "onPostDelete",
+        "click .back-button": "onBack"
+    },
+    initialize: function() {
+        this.template = _.template($(".post-delete-template").html());
+        this.render();
+    },
+    render: function() {
+        this.$el.html(this.template());
+        return this;
+    },
+    onPostDelete: function(event) {
+        event.preventDefault();
+        this.model.destroy({
+            headers: {
+                Authorization: "Bearer " + sessionStorage.getItem("token")
+            },
+            wait: true,
+            success: function(model, response) {
+                app.posts.remove(model.id);
+                Backbone.history.navigate("/index", {trigger: true});
+            },
+            error: function(model, response, options) {
+                if(response.status == 403)
+                    Backbone.history.navigate("/login", {trigger: true});
+                else
+                    alert(textStatus.state);
+            }
+        });
+    },
+    onBack: function() {
+        window.history.back();
+    }
+});
 
 app.LoginView = Backbone.View.extend({
     tagName: "div",
@@ -182,7 +203,7 @@ app.LoginView = Backbone.View.extend({
                     Authorization: "Bearer " + sessionStorage.getItem("token")
                 }
             }).done(function() {
-                Backbone.history.navigate("/readPosts", {trigger: true});
+                Backbone.history.navigate("/index", {trigger: true});
             });
         }).fail(function(jqXHR, textStatus, errorThrown) {
             if(jqXHR.status == 403)
@@ -195,64 +216,72 @@ app.LoginView = Backbone.View.extend({
 
 app.Router = Backbone.Router.extend({
     routes: {
-        "login": "login",
-        "createPost": "createPost",
-        "readPosts": "readPosts",
-        "readPost/:id": "readPost",
-        "modifyPost/:id": "modifyPost",
-        "deletePost/:id": "deletePost",
-        "*home": "home"
+        "login": "onLogin",
+        "create": "onCreate",
+        "index": "onIndex",
+        "post/:id": "onPost",
+        "edit/:id": "onEdit",
+        "delete/:id": "onDelete",
+        "*home": "onHome"
     },
-    login: function() {
+    onLogin: function() {
         $(".content").empty();
         $(".content").append(new app.LoginView().$el);
     },
-
-    createPost: function() {
+    onCreate: function() {
         $(".content").empty();
-        $(".content").append(new app.PostCreationView().$el);
+        $(".content").append(new app.PostCreateView().$el);
     },
-
-    readPosts: function() {
+    onIndex: function() {
         $(".content").empty();
-        $(".content").append(new app.PostPreviewsView({collection: app.posts}).render().$el);
+        $(".content").append(new app.PostIndexView({collection: app.posts}).render().$el);
     },
-
-    readPost: function(id) {
+    onPost: function(id) {
         let post = app.posts.get(id);
         if(!_.isUndefined(post)) {
-            let postReadView = new app.PostReadView({model: post});
-            postReadView.render();
+            let postView = new app.PostView({model: post});
+            postView.render();
             $(".content").empty();
-            $(".content").append(postReadView.$el);
+            $(".content").append(postView.$el);
         } else {
             alert("Wrong post id");
         }
     },
-
-    modifyPost: function(id) {
+    onEdit: function(id) {
         let post = app.posts.get(id);
         if(!_.isUndefined(post)) {
-            let postModificationView = new app.PostModificationView({model: post});
-            postModificationView.render();
+            let postEditView = new app.PostEditView({model: post});
+            postEditView.render();
             $(".content").empty();
-            $(".content").append(postModificationView.$el);
+            $(".content").append(postEditView.$el);
         } else {
             alert("Wrong post id");
         }
     },
-
-    deletePost: function(id) {
-    },
-    home: function() {
-        let post = app.posts.max(function(post) {
-            return post.id;
-        });
+    onDelete: function(id) {
+        let post = app.posts.get(id);
         if(!_.isUndefined(post)) {
-            let postReadView = new app.PostReadView({model: post});
-            postReadView.render();
+            let postDeleteView = new app.PostDeleteView({model: post});
+            postDeleteView.render();
             $(".content").empty();
-            $(".content").append(postReadView.$el);
+            $(".content").append(postDeleteView.$el);
+        } else {
+            alert("Wrong post id");
+        }
+    },
+    onHome: function() {
+        let post;
+        if(app.posts.size() != 0) {
+            post = app.posts.max(function(post) {
+                return post.id;
+            });
+        }
+        if(!_.isUndefined(post)) {
+            let postView = new app.PostView({model: post});
+            postView.render();
+            $(".content").empty();
+            $(".content").append(postView.$el);
+        } else {
         }
     }
 });

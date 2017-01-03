@@ -18,10 +18,10 @@
         <!--        <style>*{word-wrap:break-word;max-width:100%}</style> -->
     </head>
     <body>
-        <script type="text/template" class="post-creation-template">
+        <script type="text/template" class="post-create-template">
             <div class="row">
                 <div class="col-sm-2"></div>
-                <form class="post-creation-form col-sm-8">
+                <form class="post-create-form col-sm-8">
                     <fieldset class="well">
                         <h2>New Post</h2>
                         <div class="form-group">
@@ -46,7 +46,7 @@
                 CKEDITOR.replace("post-text");
             </script>
         </script>
-        <script type="text/template" class="post-previews-template">
+        <script type="text/template" class="post-index-template">
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -57,18 +57,18 @@
                         <th>Last Modified Date</th>
                     </tr>
                 </thead>
-                <tbody class="post-preview-views">
+                <tbody class="post-index-view">
                 </tbody>
             </table>
         </script>
-        <script type="text/template" class="post-preview-template">
+        <script type="text/template" class="post-index-item-template">
             <td><%=id%></td>
             <td><%=title%></td>
             <td><%=private%></td>
             <td><%=cdate%></td>
             <td><%=mdate%></td>
         </script>
-        <script type="text/template" class="post-read-template">
+        <script type="text/template" class="post-template">
             <h1><%=title%></h1>
             <hr/>
             <p><span class="glyphicon glyphicon-time"/> Created at <%=cdate%> <span class="glyphicon glyphicon-time"/> Last Modified at <%=mdate%></p>
@@ -76,13 +76,13 @@
             <section><%=text%></section>
             <hr/>
             <div>
-                <span class="label label-default"><%=id%></span> <% if(private == true) { %> <span class="label label-danger">private</span> <% } else { %> <span class="label label-primary">public</span> <% } %> <button class="btn btn-primary btn-xs post-modification-button">modify</button> <button class="btn btn-danger btn-xs post-deletion-button">delete</button>
+                <span class="label label-default"><%=id%></span> <% if(private == true) { %> <span class="label label-danger">private</span> <% } else { %> <span class="label label-primary">public</span> <% } %> <button class="btn btn-primary btn-xs post-edit-button">edit</button> <button class="btn btn-danger btn-xs post-delete-button">delete</button>
             </div>
         </script>
-        <script type="text/template" class="post-modification-template">
+        <script type="text/template" class="post-edit-template">
             <div class="row">
                 <div class="col-sm-2"></div>
-                <form class="post-modification-form col-sm-8">
+                <form class="post-edit-form col-sm-8">
                     <fieldset class="well">
                         <h2>Edit Post</h2>
                         <div class="form-group">
@@ -108,6 +108,16 @@
                 CKEDITOR.config.height = 500;
                 CKEDITOR.replace("post-text");
             </script>
+        </script>
+        <script type="text/template" class="post-delete-template">
+            <div class="row">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4 well">
+                    <h2>Delete Post</h2>
+                    <p>Are you really going to delete this post?</p>
+                    <button class="btn btn-danger post-delete-button">Delete</button> <button class="btn btn-default back-button">Cancel</button>
+                </div>
+            </div>
         </script>
  
         <script type="text/template" class="login-template">
@@ -136,8 +146,8 @@
             <a class="navbar-brand" href="#">Cublog</a>
             </div>
                 <ul class="nav navbar-nav">
-                    <li><a href="#readPosts">Posts</a></li>
-                    <li><a href="#createPost">New Post</a></li>
+                    <li><a href="#index">Posts</a></li>
+                    <li><a href="#create">New Post</a></li>
                     <li><a href="#login">Login</a></li>
                 </ul>
             </div>
