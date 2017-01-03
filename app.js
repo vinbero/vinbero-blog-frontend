@@ -244,8 +244,12 @@ app.Router = Backbone.Router.extend({
         $(".content").append(new app.LoginView().$el);
     },
     onCreate: function() {
-        $(".content").empty();
-        $(".content").append(new app.PostCreateView().$el);
+        if(_.isNull(sessionStorage.getItem("cublog.tokenString")))
+            Backbone.history.navigate("/login", {trigger: true});
+        else {
+            $(".content").empty();
+            $(".content").append(new app.PostCreateView().$el);
+        }
     },
     onIndex: function() {
         $(".content").empty();
@@ -263,25 +267,33 @@ app.Router = Backbone.Router.extend({
         }
     },
     onEdit: function(id) {
-        let post = app.posts.get(id);
-        if(!_.isUndefined(post)) {
-            let postEditView = new app.PostEditView({model: post});
-            postEditView.render();
-            $(".content").empty();
-            $(".content").append(postEditView.$el);
-        } else {
-            alert("Wrong post id");
+        if(_.isNull(sessionStorage.getItem("cublog.tokenString")))
+            Backbone.history.navigate("/login", {trigger: true});
+        else {
+            let post = app.posts.get(id);
+            if(!_.isUndefined(post)) {
+                let postEditView = new app.PostEditView({model: post});
+                postEditView.render();
+                $(".content").empty();
+                $(".content").append(postEditView.$el);
+            } else {
+                alert("Wrong post id");
+            }
         }
     },
     onDelete: function(id) {
-        let post = app.posts.get(id);
-        if(!_.isUndefined(post)) {
-            let postDeleteView = new app.PostDeleteView({model: post});
-            postDeleteView.render();
-            $(".content").empty();
-            $(".content").append(postDeleteView.$el);
-        } else {
-            alert("Wrong post id");
+        if(_.isNull(sessionStorage.getItem("cublog.tokenString")))
+            Backbone.history.navigate("/login", {trigger: true});
+        else {
+            let post = app.posts.get(id);
+            if(!_.isUndefined(post)) {
+                let postDeleteView = new app.PostDeleteView({model: post});
+                postDeleteView.render();
+                $(".content").empty();
+                $(".content").append(postDeleteView.$el);
+            } else {
+                alert("Wrong post id");
+            }
         }
     },
     onHome: function() {
