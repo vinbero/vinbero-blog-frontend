@@ -58,7 +58,7 @@ app.PostPreviewView = Backbone.View.extend({
         return this;
     },
     onReadPost: function() {
-        Backbone.history.navigate("readPost/" + this.model.id, {trigger: true});
+        Backbone.history.navigate("readPost/" + this.model.get("id"), {trigger: true});
     }
 });
 
@@ -71,7 +71,8 @@ app.PostPreviewsView = Backbone.View.extend({
     render: function() {
         let self = this;
         this.$el.html(this.template());
-        _.each(this.collection.toArray(), function(model) {
+        this.collection.forEach(function(model) {
+            alert(JSON.stringify(model));
             self.$el.find(".post-preview-views").append(new app.PostPreviewView({model: model}).render().$el);
         });
         return this;
@@ -80,14 +81,33 @@ app.PostPreviewsView = Backbone.View.extend({
 
 app.PostReadView = Backbone.View.extend({
     tagName: "div",
+    events: {
+        "click .post-modification-button": "onModifyPost",
+        "click .post-deletion-button": "onDeletePost"
+    },
     initialize: function() {
         this.template = _.template($(".post-read-template").html());
-        this.listenTo(this.model, "sync", this.render);
     },
     render: function() {
         this.$el.html(this.template(this.model.toJSON()));
         return this;
-    }
+    },
+    onModifyPost: function() {
+        alert("modify");
+    },
+    onDeletePost: function() {
+        let modelId = this.model.get("id");
+        this.model.destroy({
+            headers: {
+                Authorization: "Bearer " + sessionStorage.getItem("token")
+            }
+        }).done(function() {
+            app.posts.remove(modelId);
+            Backbone.history.navigate("/readPosts", {trigger: true});
+        }).fail(function() {
+            alert("delete fail");
+        });
+    },
 });
 
 app.LoginView = Backbone.View.extend({
@@ -151,10 +171,14 @@ app.Router = Backbone.Router.extend({
 
     readPost: function(id) {
         let post = app.posts.get(id);
-        let postReadView = new app.PostReadView({model: post});
-        postReadView.render();
-        $(".content").empty();
-        $(".content").append(postReadView.$el);
+        if(!_.isUndefined(post)) {
+            let postReadView = new app.PostReadView({model: post});
+            postReadView.render();
+            $(".content").empty();
+            $(".content").append(postReadView.$el);
+        } else {
+            alert("Wrong post id");
+        }
     },
 
     updatePost: function(id) {
