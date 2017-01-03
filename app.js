@@ -38,8 +38,11 @@ app.PostCreationView = Backbone.View.extend({
                 model.set(response);
                 Backbone.history.navigate("/readPosts", {trigger: true});
             },
-            error: function() {
-                alert("error");
+            error: function(model, response, options) {
+                if(response.status == 403)
+                    Backbone.history.navigate("/login", {trigger: true});
+                else
+                    alert(response.status)
             }
         });
     }
@@ -103,8 +106,11 @@ app.PostReadView = Backbone.View.extend({
         }).done(function() {
             app.posts.remove(modelId);
             Backbone.history.navigate("/readPosts", {trigger: true});
-        }).fail(function() {
-            alert("delete fail");
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            if(textStatus.status == 403)
+                Backbone.history.navigate("/login", {trigger: true});
+            else
+                alert(textStatus.state);
         });
     },
 });
@@ -137,8 +143,11 @@ app.PostModificationView = Backbone.View.extend({
                 model.set(response);
                 Backbone.history.navigate("/readPosts", {trigger: true});
             },
-            error: function() {
-                alert("error");
+            error: function(model, response, options) {
+                if(response.status == 403)
+                    Backbone.history.navigate("/login", {trigger: true});
+                else
+                    alert(response.status)
             }
         });
     }
@@ -174,7 +183,10 @@ app.LoginView = Backbone.View.extend({
                 Backbone.history.navigate("/readPosts", {trigger: true});
             });
         }).fail(function(jqXHR, textStatus, errorThrown) {
-            alert("Login Failed");
+            if(jqXHR.status == 403)
+                alert("Wrong id or password");
+            else
+                alert("Server error");
         });
     }
 });
