@@ -47,7 +47,7 @@ app.PostCreateView = Backbone.View.extend({
                 if(response.status == 403)
                     Backbone.history.navigate("/login", {trigger: true});
                 else
-                    alert(response.status)
+                    alert("Failed to create new post, response code: " + response.status)
             }
         });
     },
@@ -136,7 +136,7 @@ app.PostEditView = Backbone.View.extend({
                 "Authorization": sessionStorage.getItem("cublog.tokenString")
             },
             wait: true,
-            success: function(model, response) {
+            success: function(model, response, options) {
                 model.set(response);
                 Backbone.history.navigate("/index", {trigger: true});
             },
@@ -144,7 +144,7 @@ app.PostEditView = Backbone.View.extend({
                 if(response.status == 403)
                     Backbone.history.navigate("/login", {trigger: true});
                 else
-                    alert(response.status)
+                    alert("Failed to edit the post, response code: " + response.status)
             }
         });
     },
@@ -183,7 +183,7 @@ app.PostDeleteView = Backbone.View.extend({
                 if(response.status == 403)
                     Backbone.history.navigate("/login", {trigger: true});
                 else
-                    alert(textStatus.state);
+                    alert("Failed to delete the post, response code: " + response.status);
             }
         });
     },
@@ -216,15 +216,17 @@ app.LoginView = Backbone.View.extend({
             app.posts.fetch({
                 headers: {
                     Authorization: sessionStorage.getItem("cublog.tokenString")
+                },
+                success: function() {
+                    window.history.back();
+                },
+                error: function(model, response, options) {
+                    if(response.status == 403)
+                        alert("Wrong id or password");
+                    else
+                        alert("Server error");
                 }
-            }).done(function() {
-                window.history.back();
             });
-        }).fail(function(jqXHR, textStatus, errorThrown) {
-            if(jqXHR.status == 403)
-                alert("Wrong id or password");
-            else
-                alert("Server error");
         });
     },
     onCancel: function(event) {
@@ -383,5 +385,8 @@ app.posts.fetch({
     success: function() {
         app.router = new app.Router();
         Backbone.history.start();
+    },
+    error: function(collection, response, options) {
+        alert("Loading failed, response code:" + response.status);
     }
 });
