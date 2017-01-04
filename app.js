@@ -1,12 +1,13 @@
 let app = {}
+app.url = "http://localhost:8080/";
 
 app.Post = Backbone.Model.extend({
     idAttribute: "id",
-    urlRoot: "http://localhost:8080/posts"
+    urlRoot: app.url + "posts"
 });
 
 app.Posts = Backbone.Collection.extend({
-    url: "http://localhost:8080/posts",
+    url: app.url + "posts",
     model: app.Post,
     comparator: function(post) {
         return -post.id
@@ -207,7 +208,7 @@ app.LoginView = Backbone.View.extend({
     },
     onLogin: function(event) {
         event.preventDefault();
-        $.post({url: "http://localhost:8080/tokens", data: JSON.stringify({
+        $.post({url: app.url + "tokens", data: JSON.stringify({
             id: this.$el.find("input[name=login-id]").val(),
             password: this.$el.find("input[name=login-password]").val()
         }), dataType: "json"}).done(function(data, textStatus, jqXHR) {
