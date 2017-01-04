@@ -7,7 +7,10 @@ app.Post = Backbone.Model.extend({
 
 app.Posts = Backbone.Collection.extend({
     url: "http://localhost:8080/posts",
-    model: app.Post
+    model: app.Post,
+    comparator: function(post) {
+        return -post.id
+    }
 });
 
 app.PostCreateView = Backbone.View.extend({
