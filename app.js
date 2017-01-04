@@ -387,6 +387,6 @@ app.posts.fetch({
         Backbone.history.start();
     },
     error: function(collection, response, options) {
-        alert("Loading failed, response code:" + response.status);
+        alert("Loading failed, response code: " + response.status);
     }
 });
