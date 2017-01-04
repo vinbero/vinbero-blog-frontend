@@ -73,7 +73,7 @@
             <hr/>
             <p><span class="glyphicon glyphicon-time"/> Created at <%=cdate%> <span class="glyphicon glyphicon-time"/> Last Modified at <%=mdate%></p>
             <hr/>
-            <article style="word-wrap: break-word; max-width: 100%"><%=text%></article>
+            <article class="post-text" style="word-wrap: break-word; max-width: 100%; margin: 0 auto"><%=text%></article>
             <hr/>
             <div>
                 <span class="label label-default"><%=id%></span> <% if(private == true) { %> <span class="label label-danger">private</span> <% } else { %> <span class="label label-primary">public</span> <% } %> <button class="btn btn-primary btn-xs post-edit-button">edit</button> <button class="btn btn-danger btn-xs post-delete-button">delete</button>
