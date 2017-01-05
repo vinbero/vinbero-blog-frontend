@@ -396,9 +396,9 @@ app.Router = Backbone.Router.extend({
                 } else {
                     alert("Backup file downloading is currently unavailable, status code is: " + this.status)
                 }
-            }
-        };
-        xhr.send();
+            };
+            xhr.send();
+        }
     }
 });
 
