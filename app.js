@@ -1,4 +1,4 @@
-let app = {}
+var app = {}
 app.url = "http://localhost:8080";
 
 app.Post = Backbone.Model.extend({
@@ -81,10 +81,10 @@ app.PostIndexView = Backbone.View.extend({
         this.listenTo(this.collection, "sync", this.render);
     },
     render: function() {
-        let self = this;
+        var that = this;
         this.$el.html(this.template());
         this.collection.forEach(function(model) {
-            self.$el.find(".post-index-view").append(new app.PostIndexItemView({model: model}).render().$el);
+            that.$el.find(".post-index-view").append(new app.PostIndexItemView({model: model}).render().$el);
         });
         return this;
     }
@@ -304,9 +304,9 @@ app.Router = Backbone.Router.extend({
         $(".nav-bar").empty();
         $(".nav-bar").append(new app.NavBarView().render().$el);
 
-        let post = app.posts.get(id);
+        var post = app.posts.get(id);
         if(!_.isUndefined(post)) {
-            let postView = new app.PostView({model: post});
+            var postView = new app.PostView({model: post});
             postView.render();
             $(".content").empty();
             $(".content").append(postView.$el);
@@ -321,9 +321,9 @@ app.Router = Backbone.Router.extend({
         if(app.isLoggedIn())
             Backbone.history.navigate("/login", {trigger: true});
         else {
-            let post = app.posts.get(id);
+            var post = app.posts.get(id);
             if(!_.isUndefined(post)) {
-                let postEditView = new app.PostEditView({model: post});
+                var postEditView = new app.PostEditView({model: post});
                 postEditView.render();
                 $(".content").empty();
                 $(".content").append(postEditView.$el);
@@ -339,9 +339,9 @@ app.Router = Backbone.Router.extend({
         if(app.isLoggedIn())
             Backbone.history.navigate("/login", {trigger: true});
         else {
-            let post = app.posts.get(id);
+            var post = app.posts.get(id);
             if(!_.isUndefined(post)) {
-                let postDeleteView = new app.PostDeleteView({model: post});
+                var postDeleteView = new app.PostDeleteView({model: post});
                 postDeleteView.render();
                 $(".content").empty();
                 $(".content").append(postDeleteView.$el);
@@ -354,7 +354,7 @@ app.Router = Backbone.Router.extend({
         $(".nav-bar").empty();
         $(".nav-bar").append(new app.NavBarView().render().$el);
 
-        let post;
+        var post;
         if(app.posts.size() != 0) {
             post = app.posts.max(function(post) {
                 return post.id;
