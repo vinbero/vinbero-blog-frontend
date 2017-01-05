@@ -41,11 +41,11 @@ app.PostCreateView = Backbone.View.extend({
             wait: true,
             success: function(model, response) {
                 model.set(response);
-                Backbone.history.navigate("/index", {trigger: true});
+                Backbone.history.navigate("/!index", {trigger: true});
             },
             error: function(model, response, options) {
                 if(response.status == 403) {
-                    Backbone.history.navigate("/login", {trigger: true, replace: true});
+                    Backbone.history.navigate("/!login", {trigger: true, replace: true});
                 }
                 else {
                     bootbox.alert({
@@ -75,7 +75,7 @@ app.PostIndexItemView = Backbone.View.extend({
         click: "onPost"
     },
     onPost: function() {
-        Backbone.history.navigate("/post/" + this.model.id, {trigger: true});
+        Backbone.history.navigate("/!post/" + this.model.id, {trigger: true});
     }
 });
 
@@ -107,10 +107,10 @@ app.PostView = Backbone.View.extend({
         "click .post-delete-button": "onPostDelete"
     },
     onPostEdit: function() {
-        Backbone.history.navigate("/edit/" + this.model.id, {trigger: true});
+        Backbone.history.navigate("/!edit/" + this.model.id, {trigger: true});
     },
     onPostDelete: function() {
-        Backbone.history.navigate("/delete/" + this.model.id, {trigger: true});
+        Backbone.history.navigate("/!delete/" + this.model.id, {trigger: true});
     }
 });
 
@@ -140,11 +140,11 @@ app.PostEditView = Backbone.View.extend({
             wait: true,
             success: function(model, response, options) {
                 model.set(response);
-                Backbone.history.navigate("/index", {trigger: true});
+                Backbone.history.navigate("/!index", {trigger: true});
             },
             error: function(model, response, options) {
                 if(response.status == 403) {
-                    Backbone.history.navigate("/login", {trigger: true, replace: true});
+                    Backbone.history.navigate("/!login", {trigger: true, replace: true});
                 }
                 else {
                     bootbox.alert({
@@ -183,11 +183,11 @@ app.PostDeleteView = Backbone.View.extend({
             wait: true,
             success: function(model, response) {
                 app.posts.remove(model.id);
-                Backbone.history.navigate("/index", {trigger: true});
+                Backbone.history.navigate("/!index", {trigger: true});
             },
             error: function(model, response, options) {
                 if(response.status == 403) {
-                    Backbone.history.navigate("/login", {trigger: true, replace: true});
+                    Backbone.history.navigate("/!login", {trigger: true, replace: true});
                 }
                 else {
                     bootbox.alert({
@@ -293,14 +293,15 @@ app.BackupView = Backbone.View.extend({
 
 app.Router = Backbone.Router.extend({
     routes: {
-        "login": "onLogin",
-        "logout": "onLogout",
-        "create": "onCreate",
-        "index": "onIndex",
-        "post/:id": "onPost",
-        "edit/:id": "onEdit",
-        "delete/:id": "onDelete",
-        "backup": "onBackup",
+        "!login": "onLogin",
+        "!logout": "onLogout",
+        "!create": "onCreate",
+        "!index": "onIndex",
+        "!post/:id": "onPost",
+        "!edit/:id": "onEdit",
+        "!delete/:id": "onDelete",
+        "!backup": "onBackup",
+        "!": "onHome",
         "": "onHome"
     },
     onLogin: function() {
@@ -319,7 +320,7 @@ app.Router = Backbone.Router.extend({
         $(".nav-bar").append(new app.NavBarView().render().$el);
 
         if(!app.isLoggedIn())
-            Backbone.history.navigate("/login", {trigger: true, replace: true});
+            Backbone.history.navigate("/!login", {trigger: true, replace: true});
         else {
             $(".content").empty();
             $(".content").append(new app.PostCreateView().$el);
@@ -357,7 +358,7 @@ app.Router = Backbone.Router.extend({
         $(".nav-bar").append(new app.NavBarView().render().$el);
 
         if(!app.isLoggedIn())
-            Backbone.history.navigate("/login", {trigger: true, replace: true});
+            Backbone.history.navigate("/!login", {trigger: true, replace: true});
         else {
             var post = app.posts.get(id);
             if(!_.isUndefined(post)) {
@@ -378,7 +379,7 @@ app.Router = Backbone.Router.extend({
         $(".nav-bar").append(new app.NavBarView().render().$el);
 
         if(!app.isLoggedIn())
-            Backbone.history.navigate("/login", {trigger: true, replace: true});
+            Backbone.history.navigate("/!login", {trigger: true, replace: true});
         else {
             var post = app.posts.get(id);
             if(!_.isUndefined(post)) {
@@ -416,7 +417,7 @@ app.Router = Backbone.Router.extend({
         $(".nav-bar").empty();
         $(".nav-bar").append(new app.NavBarView().render().$el);
         if(!app.isLoggedIn())
-            Backbone.history.navigate("/login", {trigger: true, replace: true});
+            Backbone.history.navigate("/!login", {trigger: true, replace: true});
         else { 
             $(".content").empty();
             $(".content").append(new app.BackupView().render().$el);
