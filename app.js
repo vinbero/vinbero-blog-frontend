@@ -218,13 +218,15 @@ app.LoginView = Backbone.View.extend({
                 success: function() {
                     history.back();
                 },
-                error: function(model, response, options) {
-                    if(response.status == 403)
-                        alert("Wrong id or password");
-                    else
-                        alert("Server error");
+                error: function(collection, response, options) {
+                    alert("Server error while fetching posts, response code is: " + response.status);
                 }
             });
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            if(jqXHR.status == 403)
+                alert("Wrong id or password");
+            else
+                alert("Server error, response code is: " + jqXHR.status);
         });
     },
     onCancel: function(event) {
