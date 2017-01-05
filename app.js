@@ -276,7 +276,7 @@ app.Router = Backbone.Router.extend({
         "edit/:id": "onEdit",
         "delete/:id": "onDelete",
         "backup": "onBackup",
-        "*home": "onHome"
+        "": "onHome"
     },
     onLogin: function() {
         $(".nav-bar").empty();
