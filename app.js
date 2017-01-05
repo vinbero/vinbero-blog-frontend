@@ -44,8 +44,9 @@ app.PostCreateView = Backbone.View.extend({
                 Backbone.history.navigate("/index", {trigger: true});
             },
             error: function(model, response, options) {
-                if(response.status == 403)
-                    Backbone.history.navigate("/login", {trigger: true});
+                if(response.status == 403) {
+                    Backbone.history.navigate("/login", {trigger: true, replace: true});
+                }
                 else
                     alert("Failed to create new post, response code: " + response.status)
             }
@@ -53,7 +54,7 @@ app.PostCreateView = Backbone.View.extend({
     },
     onCancel: function(event) {
         event.preventDefault();
-        window.history.back();
+        history.back();
     }
 });
 
@@ -70,7 +71,7 @@ app.PostIndexItemView = Backbone.View.extend({
         click: "onPost"
     },
     onPost: function() {
-        Backbone.history.navigate("post/" + this.model.id, {trigger: true});
+        Backbone.history.navigate("/post/" + this.model.id, {trigger: true});
     }
 });
 
@@ -138,8 +139,9 @@ app.PostEditView = Backbone.View.extend({
                 Backbone.history.navigate("/index", {trigger: true});
             },
             error: function(model, response, options) {
-                if(response.status == 403)
-                    Backbone.history.navigate("/login", {trigger: true});
+                if(response.status == 403) {
+                    Backbone.history.navigate("/login", {trigger: true, replace: true});
+                }
                 else
                     alert("Failed to edit the post, response code: " + response.status)
             }
@@ -147,7 +149,7 @@ app.PostEditView = Backbone.View.extend({
     },
     onCancel: function(event) {
         event.preventDefault();
-        window.history.back();
+        history.back();
     }
 });
 
@@ -176,15 +178,16 @@ app.PostDeleteView = Backbone.View.extend({
                 Backbone.history.navigate("/index", {trigger: true});
             },
             error: function(model, response, options) {
-                if(response.status == 403)
-                    Backbone.history.navigate("/login", {trigger: true});
+                if(response.status == 403) {
+                    Backbone.history.navigate("/login", {trigger: true, replace: true});
+                }
                 else
                     alert("Failed to delete the post, response code: " + response.status);
             }
         });
     },
     onCancel: function(event) {
-        window.history.back();
+        history.back();
     }
 });
 
@@ -213,7 +216,7 @@ app.LoginView = Backbone.View.extend({
                     Authorization: sessionStorage.getItem(app.tokenKey)
                 },
                 success: function() {
-                    window.history.back();
+                    history.back();
                 },
                 error: function(model, response, options) {
                     if(response.status == 403)
@@ -226,7 +229,7 @@ app.LoginView = Backbone.View.extend({
     },
     onCancel: function(event) {
         event.preventDefault();
-        window.history.back();
+        history.back();
     }
 });
 
@@ -284,14 +287,14 @@ app.Router = Backbone.Router.extend({
     },
     onLogout: function() {
         app.logout();
-        window.history.back();
+        history.back();
     },
     onCreate: function() {
         $(".nav-bar").empty();
         $(".nav-bar").append(new app.NavBarView().render().$el);
 
-        if(app.isLoggedIn())
-            Backbone.history.navigate("/login", {trigger: true});
+        if(!app.isLoggedIn())
+            Backbone.history.navigate("/login", {trigger: true, replace: true});
         else {
             $(".content").empty();
             $(".content").append(new app.PostCreateView().$el);
@@ -325,8 +328,8 @@ app.Router = Backbone.Router.extend({
         $(".nav-bar").empty();
         $(".nav-bar").append(new app.NavBarView().render().$el);
 
-        if(app.isLoggedIn())
-            Backbone.history.navigate("/login", {trigger: true});
+        if(!app.isLoggedIn())
+            Backbone.history.navigate("/login", {trigger: true, replace: true});
         else {
             var post = app.posts.get(id);
             if(!_.isUndefined(post)) {
@@ -343,8 +346,8 @@ app.Router = Backbone.Router.extend({
         $(".nav-bar").empty();
         $(".nav-bar").append(new app.NavBarView().render().$el);
 
-        if(app.isLoggedIn())
-            Backbone.history.navigate("/login", {trigger: true});
+        if(!app.isLoggedIn())
+            Backbone.history.navigate("/login", {trigger: true, replace: true});
         else {
             var post = app.posts.get(id);
             if(!_.isUndefined(post)) {
@@ -378,8 +381,8 @@ app.Router = Backbone.Router.extend({
     onBackup: function() {
         $(".nav-bar").empty();
         $(".nav-bar").append(new app.NavBarView().render().$el);
-        if(app.isLoggedIn())
-            Backbone.history.navigate("/login", {trigger: true});
+        if(!app.isLoggedIn())
+            Backbone.history.navigate("/login", {trigger: true, replace: true});
         else { 
             $(".content").empty();
             $(".content").append(new app.BackupView().render().$el);
@@ -407,7 +410,7 @@ app.logout = function() {
 };
 
 app.isLoggedIn = function() {
-    return _.isNull(sessionStorage.getItem(app.tokenKey));
+    return ! _.isNull(sessionStorage.getItem(app.tokenKey));
 };
 
 app.posts = new app.Posts();
