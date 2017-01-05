@@ -1,5 +1,6 @@
 var app = {}
 app.url = "http://localhost:8080";
+app.tokenKey = "cublog.token";
 
 app.Post = Backbone.Model.extend({
     idAttribute: "id",
@@ -35,7 +36,7 @@ app.PostCreateView = Backbone.View.extend({
             text: CKEDITOR.instances["post-text"].getData()
         }, {
             headers: {
-                "Authorization": sessionStorage.getItem("cublog.tokenString")
+                "Authorization": sessionStorage.getItem(app.tokenKey)
             },
             wait: true,
             success: function(model, response) {
@@ -129,7 +130,7 @@ app.PostEditView = Backbone.View.extend({
             text: CKEDITOR.instances["post-text"].getData()
         }, {
             headers: {
-                "Authorization": sessionStorage.getItem("cublog.tokenString")
+                "Authorization": sessionStorage.getItem(app.tokenKey)
             },
             wait: true,
             success: function(model, response, options) {
@@ -167,7 +168,7 @@ app.PostDeleteView = Backbone.View.extend({
         event.preventDefault();
         this.model.destroy({
             headers: {
-                Authorization: sessionStorage.getItem("cublog.tokenString")
+                Authorization: sessionStorage.getItem(app.tokenKey)
             },
             wait: true,
             success: function(model, response) {
@@ -206,10 +207,10 @@ app.LoginView = Backbone.View.extend({
             id: this.$el.find("input[name=login-id]").val(),
             password: this.$el.find("input[name=login-password]").val()
         }), dataType: "json"}).done(function(data, textStatus, jqXHR) {
-            sessionStorage.setItem("cublog.tokenString", "Bearer " + data);
+            sessionStorage.setItem(app.tokenKey, "Bearer " + data);
             app.posts.fetch({
                 headers: {
-                    Authorization: sessionStorage.getItem("cublog.tokenString")
+                    Authorization: sessionStorage.getItem(app.tokenKey)
                 },
                 success: function() {
                     window.history.back();
@@ -385,7 +386,7 @@ app.Router = Backbone.Router.extend({
             var xhr = new XMLHttpRequest();
             xhr.open("GET", app.url + "/backup", true);
             xhr.responseType = "blob";
-            xhr.setRequestHeader("Authorization", sessionStorage.getItem("cublog.tokenString"));
+            xhr.setRequestHeader("Authorization", sessionStorage.getItem(app.tokenKey));
             xhr.onload = function(event) {
                 if(this.status == 200) {
                     $(".download-link").attr({
@@ -402,17 +403,17 @@ app.Router = Backbone.Router.extend({
 });
 
 app.logout = function() {
-    sessionStorage.removeItem("cublog.tokenString");
+    sessionStorage.removeItem(app.tokenKey);
 };
 
 app.isLoggedIn = function() {
-    return _.isNull(sessionStorage.getItem("cublog.tokenString"));
+    return _.isNull(sessionStorage.getItem(app.tokenKey));
 };
 
 app.posts = new app.Posts();
 app.posts.fetch({
     headers: {
-        Authorization: sessionStorage.getItem("cublog.tokenString")
+        Authorization: sessionStorage.getItem(app.tokenKey)
     },
     success: function() {
         app.router = new app.Router();
