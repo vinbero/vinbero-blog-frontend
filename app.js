@@ -47,8 +47,12 @@ app.PostCreateView = Backbone.View.extend({
                 if(response.status == 403) {
                     Backbone.history.navigate("/login", {trigger: true, replace: true});
                 }
-                else
-                    alert("Failed to create new post, response code: " + response.status)
+                else {
+                    bootbox.alert({
+                        message: "Failed to create new post, response code: " + response.status,
+                        size: "small"
+                    });
+                }
             }
         });
     },
@@ -142,8 +146,12 @@ app.PostEditView = Backbone.View.extend({
                 if(response.status == 403) {
                     Backbone.history.navigate("/login", {trigger: true, replace: true});
                 }
-                else
-                    alert("Failed to edit the post, response code: " + response.status)
+                else {
+                    bootbox.alert({
+                        message: "Failed to edit the post, response code: " + response.status,
+                        size: "small"
+                    });
+                }
             }
         });
     },
@@ -181,8 +189,12 @@ app.PostDeleteView = Backbone.View.extend({
                 if(response.status == 403) {
                     Backbone.history.navigate("/login", {trigger: true, replace: true});
                 }
-                else
-                    alert("Failed to delete the post, response code: " + response.status);
+                else {
+                    bootbox.alert({
+                        message: "Failed to delete the post, response code: " + response.status,
+                        size: "small"
+                    });
+                }
             }
         });
     },
@@ -219,14 +231,25 @@ app.LoginView = Backbone.View.extend({
                     history.back();
                 },
                 error: function(collection, response, options) {
-                    alert("Server error while fetching posts, response code is: " + response.status);
+                    bootbox.alert({
+                        message: "Server error while fetching posts, response code is: " + response.status,
+                        size: "small"
+                    });
                 }
             });
         }).fail(function(jqXHR, textStatus, errorThrown) {
-            if(jqXHR.status == 403)
-                alert("Wrong id or password");
-            else
-                alert("Server error, response code is: " + jqXHR.status);
+            if(jqXHR.status == 403) {
+                bootbox.alert({
+                    message: "Wrong id or password",
+                    size: "small"
+                });
+            }
+            else {
+                bootbox.alert({
+                    message: "Server error, response code is: " + jqXHR.status,
+                    size: "small"
+                });
+            }
         });
     },
     onCancel: function(event) {
@@ -323,7 +346,10 @@ app.Router = Backbone.Router.extend({
             $(".content").empty();
             $(".content").append(postView.$el);
         } else {
-            alert("Wrong post id");
+            bootbox.alert({
+                message: "Wrong post id",
+                size: "small"
+            });
         }
     },
     onEdit: function(id) {
@@ -340,7 +366,10 @@ app.Router = Backbone.Router.extend({
                 $(".content").empty();
                 $(".content").append(postEditView.$el);
             } else {
-                alert("Wrong post id");
+                bootbox.alert({
+                    message: "Wrong post id",
+                    size: "small"
+                });
             }
         }
     },
@@ -358,7 +387,10 @@ app.Router = Backbone.Router.extend({
                 $(".content").empty();
                 $(".content").append(postDeleteView.$el);
             } else {
-                alert("Wrong post id");
+                bootbox.alert({
+                    message: "Wrong post id",
+                    size: "small"
+                });
             }
         }
     },
@@ -399,7 +431,10 @@ app.Router = Backbone.Router.extend({
                         "download": "BACKUP.db"
                     }).html("Download the file").removeClass("disabled").removeClass("btn-default").addClass("btn-success");
                 } else {
-                    alert("Backup file downloading is currently unavailable, status code is: " + this.status)
+                    bootbox.alert({
+                        message: "Backup file downloading is currently unavailable, status code is: " + this.status,
+                        size: "small"
+                    });
                 }
             };
             xhr.send();
@@ -425,7 +460,10 @@ app.posts.fetch({
         Backbone.history.start();
     },
     error: function(collection, response, options) {
-        alert("Loading failed, response code: " + response.status);
+        bootbox.alert({
+            message: "Loading failed, response code: " + response.status,
+            size: "small"
+        });
     }
 });
 
