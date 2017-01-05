@@ -75,7 +75,14 @@
             <article class="post-text" style="word-wrap: break-word; max-width: 100%; margin: 0 auto"><%=text%></article>
             <hr/>
             <div>
-                <span class="label label-default"><%=id%></span> <% if(private == true) { %> <span class="label label-danger">private</span> <% } else { %> <span class="label label-primary">public</span> <% } %> <button class="btn btn-primary btn-xs post-edit-button">edit</button> <button class="btn btn-danger btn-xs post-delete-button">delete</button>
+                <span class="label label-default"><%=id%></span>
+                <% if(private == true) { %>
+                    <span class="label label-danger">private</span>
+                <% } else { %>
+                    <span class="label label-primary">public</span>
+                <% } %>
+                <button class="btn btn-primary btn-xs post-edit-button">edit</button>
+                <button class="btn btn-danger btn-xs post-delete-button">delete</button>
             </div>
         </script>
         <script type="text/template" class="post-edit-template">
@@ -147,6 +154,7 @@
                     <ul class="nav navbar-nav">
                         <li><a href="#index">Posts</a></li>
                         <li><a href="#create">New Post</a></li>
+                        <li><a href="#backup">Backup</a></li>
                         <% if(loggedIn == true) { %>
                             <li><a href="#login">Login</a></li>
                         <% } else { %> 
@@ -157,9 +165,26 @@
             </nav>
         </script>
         <script type="text/template" class="empty-template">
-            <h1>There are currently no posts at all</h1>
-            <a href="#create" class="btn btn-success">New Post</a>
+            <div class="row">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4 well">
+                    <h2>Empty Main Page</h2>
+                    <p>There are no posts at all. Do you want to create new one?</p>
+                    <a href="#create" class="btn btn-success">New Post</a>
+                </div>
+            </div>
         </script>
+        <script type="text/template" class="backup-template">
+            <div class="row">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4 well">
+                    <h2>Backup your posts</h2>
+                    <br/>
+                    <a class="download-link btn btn-default disabled">Preparing download...</a>
+                </div>
+            </div>
+        </script>
+        <a class="download"></a>
         <div class="nav-bar">
         </div>
         <div class="container">

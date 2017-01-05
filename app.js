@@ -15,11 +15,6 @@ app.Posts = Backbone.Collection.extend({
 });
 
 app.PostCreateView = Backbone.View.extend({
-    tagName: "div",
-    events: {
-        "submit .post-create-form": "onPostCreate",
-        "click .cancel-button": "onCancel"
-    },
     initialize: function() {
         this.template = _.template($(".post-create-template").html());
         this.render();
@@ -27,6 +22,10 @@ app.PostCreateView = Backbone.View.extend({
     render: function() {
         this.$el.html(this.template());
         return this;
+    },
+    events: {
+        "submit .post-create-form": "onPostCreate",
+        "click .cancel-button": "onCancel"
     },
     onPostCreate: function(event) {
         event.preventDefault();
@@ -58,16 +57,16 @@ app.PostCreateView = Backbone.View.extend({
 });
 
 app.PostIndexItemView = Backbone.View.extend({
-    tagName: "tr",
-    events: {
-        click: "onPost"
-    },
     initialize: function() {
         this.template = _.template($(".post-index-item-template").html());
     },
+    tagName: "tr",
     render: function() {
         this.$el.html(this.template(this.model.toJSON()));
         return this;
+    },
+    events: {
+        click: "onPost"
     },
     onPost: function() {
         Backbone.history.navigate("post/" + this.model.id, {trigger: true});
@@ -75,7 +74,6 @@ app.PostIndexItemView = Backbone.View.extend({
 });
 
 app.PostIndexView = Backbone.View.extend({
-    tagName: "div",
     initialize: function() {
         this.template = _.template($(".post-index-template").html());
         this.listenTo(this.collection, "sync", this.render);
@@ -91,17 +89,16 @@ app.PostIndexView = Backbone.View.extend({
 });
 
 app.PostView = Backbone.View.extend({
-    tagName: "div",
-    events: {
-        "click .post-edit-button": "onPostEdit",
-        "click .post-delete-button": "onPostDelete"
-    },
     initialize: function() {
         this.template = _.template($(".post-template").html());
     },
     render: function() {
         this.$el.html(this.template(this.model.toJSON()));
         return this;
+    },
+    events: {
+        "click .post-edit-button": "onPostEdit",
+        "click .post-delete-button": "onPostDelete"
     },
     onPostEdit: function() {
         Backbone.history.navigate("/edit/" + this.model.id, {trigger: true});
@@ -112,11 +109,6 @@ app.PostView = Backbone.View.extend({
 });
 
 app.PostEditView = Backbone.View.extend({
-    tagName: "div",
-    events: {
-        "submit .post-edit-form": "onPostEdit",
-        "click .cancel-button": "onCancel"
-    },
     initialize: function() {
         this.template = _.template($(".post-edit-template").html());
         this.render();
@@ -124,6 +116,10 @@ app.PostEditView = Backbone.View.extend({
     render: function() {
         this.$el.html(this.template(this.model.toJSON()));
         return this;
+    },
+    events: {
+        "submit .post-edit-form": "onPostEdit",
+        "click .cancel-button": "onCancel"
     },
     onPostEdit: function(event) {
         event.preventDefault();
@@ -155,11 +151,6 @@ app.PostEditView = Backbone.View.extend({
 });
 
 app.PostDeleteView = Backbone.View.extend({
-    tagName: "div",
-    events: {
-        "click .post-delete-button": "onPostDelete",
-        "click .cancel-button": "onCancel"
-    },
     initialize: function() {
         this.template = _.template($(".post-delete-template").html());
         this.render();
@@ -167,6 +158,10 @@ app.PostDeleteView = Backbone.View.extend({
     render: function() {
         this.$el.html(this.template());
         return this;
+    },
+    events: {
+        "click .post-delete-button": "onPostDelete",
+        "click .cancel-button": "onCancel"
     },
     onPostDelete: function(event) {
         event.preventDefault();
@@ -193,11 +188,6 @@ app.PostDeleteView = Backbone.View.extend({
 });
 
 app.LoginView = Backbone.View.extend({
-    tagName: "div",
-    events: {
-        "submit .login-form": "onLogin",
-        "click .cancel-button": "onCancel"
-    },
     initialize: function() {
         this.template = _.template($(".login-template").html());
         this.render();
@@ -205,6 +195,10 @@ app.LoginView = Backbone.View.extend({
     render: function() {
         this.$el.html(this.template());
         return this;
+    },
+    events: {
+        "submit .login-form": "onLogin",
+        "click .cancel-button": "onCancel"
     },
     onLogin: function(event) {
         event.preventDefault();
@@ -257,6 +251,17 @@ app.EmptyView = Backbone.View.extend({
     }
 });
 
+app.BackupView = Backbone.View.extend({
+    initialize: function() {
+        this.template = _.template($(".backup-template").html());
+        this.render();
+    },
+    render: function() {
+        this.$el.html(this.template());
+        return this;
+    },
+});
+
 app.Router = Backbone.Router.extend({
     routes: {
         "login": "onLogin",
@@ -266,6 +271,7 @@ app.Router = Backbone.Router.extend({
         "post/:id": "onPost",
         "edit/:id": "onEdit",
         "delete/:id": "onDelete",
+        "backup": "onBackup",
         "*home": "onHome"
     },
     onLogin: function() {
@@ -367,15 +373,41 @@ app.Router = Backbone.Router.extend({
             $(".content").empty();
             $(".content").append(new app.EmptyView().render().$el);
         }
+    },
+    onBackup: function() {
+        $(".nav-bar").empty();
+        $(".nav-bar").append(new app.NavBarView().render().$el);
+        if(app.isLoggedIn())
+            Backbone.history.navigate("/login", {trigger: true});
+        else { 
+            $(".content").empty();
+            $(".content").append(new app.BackupView().render().$el);
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", app.url + "/backup", true);
+            xhr.responseType = "blob";
+            xhr.setRequestHeader("Authorization", sessionStorage.getItem("cublog.tokenString"));
+            xhr.onload = function(event) {
+                if(this.status == 200) {
+                    $(".download-link").attr({
+                        "href": URL.createObjectURL(this.response),
+                        "download": "BACKUP.db"
+                    }).html("Download the file").removeClass("disabled").removeClass("btn-default").addClass("btn-success");
+                } else {
+                    alert("Backup file downloading is currently unavailable, status code is: " + this.status)
+                }
+            }
+        };
+        xhr.send();
     }
 });
 
 app.logout = function() {
     sessionStorage.removeItem("cublog.tokenString");
 };
+
 app.isLoggedIn = function() {
     return _.isNull(sessionStorage.getItem("cublog.tokenString"));
-}
+};
 
 app.posts = new app.Posts();
 app.posts.fetch({
@@ -390,3 +422,4 @@ app.posts.fetch({
         alert("Loading failed, response code: " + response.status);
     }
 });
+
