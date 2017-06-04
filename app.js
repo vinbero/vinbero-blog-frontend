@@ -426,7 +426,7 @@ app.Router = Backbone.Router.extend({
             xhr.responseType = "blob";
             xhr.setRequestHeader("Authorization", sessionStorage.getItem(app.tokenKey));
             xhr.onload = function(event) {
-                if(this.status == 200) {
+                if(this.status == 200) { // You should call revokeObjectURL to prevent memory leak
                     $(".download-link").attr({
                         "href": URL.createObjectURL(this.response),
                         "download": "BACKUP.db"
