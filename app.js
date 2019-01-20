@@ -1,5 +1,5 @@
 var app = {}
-app.url = location.origin + ":8080";
+app.url = location.origin + "/cublog";
 app.tokenKey = "cublog.token";
 
 app.Post = Backbone.Model.extend({
